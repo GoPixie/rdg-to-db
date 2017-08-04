@@ -6,10 +6,12 @@ from zipfile import ZipFile
 import mechanicalsoup
 import logging
 from io import BytesIO
-from getpass import getpass
 
-parser = argparse.ArgumentParser(description='Download raw Fares feed zip file from http://data.atoc.org/ and extract to a \'feeds\' subfolder.')
-parser.add_argument('-u', '--username', metavar='USERNAME', help='Your data.atoc.org username (will prompt for password)', required=True)
+from lib.config import read_config, get_rdg_credentials
+
+parser = argparse.ArgumentParser(description='Download raw Fares feed zip file from http://data.atoc.org/ and extract to a \'feeds\' subfolder.',
+                                 epilog='Tip: Run ./setup to store username and password locally for reuse')
+parser.add_argument('-u', '--username', metavar='USERNAME', help='Your data.atoc.org username (will prompt for password)')
 parser.add_argument('-v', help='More output including GET/POST progress', action='store_true')
 
 def download_fares_feed(username, password):
@@ -46,10 +48,13 @@ if __name__ == '__main__':
     args = vars(parser.parse_args())
     if args['v']:
         logging.basicConfig(level=logging.DEBUG)
-    if args['username']:
-        args['password'] = getpass('atoc password:')
-        download_fares_feed(args['username'], args['password'])
+
+    creds = get_rdg_credentials(args)
+    if creds['username'] and creds['password']:
+        download_fares_feed(creds['username'], creds['password'])
     else:
-        if 'username' not in args:
+        if 'username' not in creds:
             log.error("### Couldn't find a username")
+        if 'password' not in creds:
+            log.error("### Couldn't find a password")
         parser.print_help()

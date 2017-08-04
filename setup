@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+
+import configparser
+from lib.config import read_config, CRED
+from collections import OrderedDict
+
+if __name__ == '__main__':
+    print('Enter your login credentials for data.atoc.org')
+    print('(These will be stored locally in local.cfg)')
+    existing = read_config()
+    if existing and CRED in existing and existing[CRED].get('username', None):
+        username = input('atoc username (existing: %s): ' % (existing[CRED]['username']))
+        if not username.strip():
+            username = existing[CRED]['username']
+    else:
+        username = input('atoc username: ')
+    if existing and CRED in existing and existing[CRED]['password']:
+        password = input('atoc password (leave empty to keep existing): ')  # plaintext input as it will be stored as plaintext in local.cfg
+        if not password.strip():
+            password = existing[CRED]['password']
+    else:
+        password = input('atoc password: ')
+
+    config = configparser.ConfigParser()
+    config[CRED] = OrderedDict((('username', username), ('password', password)))
+    with open('local.cfg', 'w') as configfile:
+        config.write(configfile)
