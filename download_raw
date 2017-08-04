@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 import argparse
 from zipfile import ZipFile
 import mechanicalsoup
 import logging
+from colorlog import ColoredFormatter
 from io import BytesIO
 
 from lib.config import read_config, get_rdg_credentials
@@ -13,6 +15,7 @@ parser = argparse.ArgumentParser(description='Download raw Fares feed zip file f
                                  epilog='Tip: Run ./setup to store username and password locally for reuse')
 parser.add_argument('-u', '--username', metavar='USERNAME', help='Your data.atoc.org username (will prompt for password)')
 parser.add_argument('-v', help='More output including GET/POST progress', action='store_true')
+parser.add_argument('-q', '--quiet', help='Suppress normal output', action='store_true')
 
 def download_fares_feed(username, password):
     log = logging.getLogger('download_fares_feed')
@@ -23,6 +26,15 @@ def download_fares_feed(username, password):
     br['name'] = username
     br['pass'] = password
     br.submit_selected()
+    page = br.get_current_page()
+    possible_errors = page.select('.error')
+    if possible_errors:
+        log.error('Login appears unsuccessful:')
+        for pe in possible_errors:
+            log.error(pe.text.strip())
+        sys.exit(1)
+    else:
+        log.info('Login successful, attempting download')
     br.open('http://data.atoc.org/data-download')
     for l in br.links():
         log.debug('Examining link: %r ' % (l))
@@ -37,7 +49,7 @@ def download_fares_feed(username, password):
                 log.error('rdg unknown fares feed available: %s' % (fname))
     else:
         log.error('Fares url not found')
-        return
+        sys.exit(1)
     response = br.open(url)
     zz = ZipFile(BytesIO(response.content))
     feeds_path = os.path.join(os.getcwd(), 'feeds', 'fares')
@@ -47,7 +59,13 @@ def download_fares_feed(username, password):
 if __name__ == '__main__':
     args = vars(parser.parse_args())
     if args['v']:
-        logging.basicConfig(level=logging.DEBUG)
+        logging.root.setLevel(logging.DEBUG)
+    elif not args['quiet']:
+        logging.root.setLevel(logging.INFO)
+    formatter = ColoredFormatter("%(log_color)s%(message)s%(reset)s")
+    stream = logging.StreamHandler()
+    stream.setFormatter(formatter)
+    logging.root.addHandler(stream)
 
     creds = get_rdg_credentials(args)
     if creds['username'] and creds['password']:
