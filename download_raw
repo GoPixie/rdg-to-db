@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+
+import os
+import argparse
+from zipfile import ZipFile
+import mechanicalsoup
+import logging
+from io import BytesIO
+from getpass import getpass
+
+parser = argparse.ArgumentParser(description='Download raw Fares feed zip file from http://data.atoc.org/ and extract to a \'feeds\' subfolder.')
+parser.add_argument('-u', '--username', metavar='USERNAME', help='Your data.atoc.org username (will prompt for password)', required=True)
+parser.add_argument('-v', help='More output including GET/POST progress', action='store_true')
+
+def download_fares_feed(username, password):
+    log = logging.getLogger('download_fares_feed')
+    br = mechanicalsoup.StatefulBrowser(soup_config={'features': 'lxml'})
+    log.debug('Downloading rdg fares feed from http://data.atoc.org/')
+    br.open('http://data.atoc.org/?q=user')  # or http://data.atoc.org/user/login?current=node/1
+    br.select_form('#user-login')
+    br['name'] = username
+    br['pass'] = password
+    br.submit_selected()
+    br.open('http://data.atoc.org/data-download')
+    for l in br.links():
+        log.debug('Examining link: %r ' % (l))
+        url = br.absolute_url(l['href'])
+        fname = url.rsplit('/')[-1]
+        if fname.startswith('RJFA') and fname.lower().endswith('.zip'):
+            if fname.startswith('RJFAF'):
+                break
+            elif fname.startswith('RJFAC'):
+                log.warning('rdg incremental-changes fares feed available: %s' % (fname))
+            else:
+                log.error('rdg unknown fares feed available: %s' % (fname))
+    else:
+        log.error('Fares url not found')
+        return
+    response = br.open(url)
+    zz = ZipFile(BytesIO(response.content))
+    feeds_path = os.path.join(os.getcwd(), 'feeds', 'fares')
+    zz.extractall(feeds_path)
+    log.info('Extracted all files to %s' % feeds_path)
+
+if __name__ == '__main__':
+    args = vars(parser.parse_args())
+    if args['v']:
+        logging.basicConfig(level=logging.DEBUG)
+    if args['username']:
+        args['password'] = getpass('atoc password:')
+        download_fares_feed(args['username'], args['password'])
+    else:
+        if 'username' not in args:
+            log.error("### Couldn't find a username")
+        parser.print_help()
