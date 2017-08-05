@@ -11,13 +11,14 @@ from io import BytesIO
 
 from lib.config import read_config, get_rdg_credentials
 
-parser = argparse.ArgumentParser(description='Download raw Fares feed zip file from http://data.atoc.org/ and extract to a \'feeds\' subfolder.',
+parser = argparse.ArgumentParser(description='Download raw Fares feed zip file from http://data.atoc.org/ to a \'feeds\' subfolder.',
                                  epilog='Tip: Run ./setup to store username and password locally for reuse')
 parser.add_argument('-u', '--username', metavar='USERNAME', help='Your data.atoc.org username (will prompt for password)')
 parser.add_argument('-v', help='More output including GET/POST progress', action='store_true')
 parser.add_argument('-q', '--quiet', help='Suppress normal output', action='store_true')
+parser.add_argument('--unzip', help='Also unzip', action='store_true')
 
-def download_fares_feed(username, password):
+def download_fares_feed(username, password, unzip=False):
     log = logging.getLogger('download_fares_feed')
     br = mechanicalsoup.StatefulBrowser(soup_config={'features': 'lxml'})
     log.debug('Downloading rdg fares feed from http://data.atoc.org/')
@@ -51,10 +52,16 @@ def download_fares_feed(username, password):
         log.error('Fares url not found')
         sys.exit(1)
     response = br.open(url)
-    zz = ZipFile(BytesIO(response.content))
-    feeds_path = os.path.join(os.getcwd(), 'feeds', 'fares')
-    zz.extractall(feeds_path)
-    log.info('Extracted all files to %s' % feeds_path)
+    if unzip:
+        zz = ZipFile(BytesIO(response.content))
+        feeds_path = os.path.join(os.getcwd(), 'feeds', 'fares')
+        zz.extractall(feeds_path)
+        log.info('Extracted all files to %s' % feeds_path)
+    else:
+        zip_path = os.path.join(os.getcwd(), 'feeds', fname)
+        with open(zip_path, 'wb') as zf:
+            zf.write(response.content)
+            log.info('Downloaded to %s' % (zip_path))
 
 if __name__ == '__main__':
     args = vars(parser.parse_args())
@@ -69,7 +76,7 @@ if __name__ == '__main__':
 
     creds = get_rdg_credentials(args)
     if creds['username'] and creds['password']:
-        download_fares_feed(creds['username'], creds['password'])
+        download_fares_feed(creds['username'], creds['password'], args['unzip'])
     else:
         if 'username' not in creds:
             log.error("### Couldn't find a username")

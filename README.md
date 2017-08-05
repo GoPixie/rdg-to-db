@@ -26,4 +26,4 @@ run
 ```
 ./download_raw
 ```
-to download and unzip fares feed to ./feeds/fares subfolder
+to download fares feed to ./feeds/fares subfolder
