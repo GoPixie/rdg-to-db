@@ -11,17 +11,17 @@ from io import BytesIO
 
 from lib.config import read_config, get_rdg_credentials
 
-parser = argparse.ArgumentParser(description='Download raw Fares feed zip file from http://data.atoc.org/ to a \'feeds\' subfolder.',
+parser = argparse.ArgumentParser(description='Download raw Fares, Timetables & London Terminals zip files from http://data.atoc.org/ to a \'feeds\' subfolder.',
                                  epilog='Tip: Run ./setup to store username and password locally for reuse')
 parser.add_argument('-u', '--username', metavar='USERNAME', help='Your data.atoc.org username (will prompt for password)')
 parser.add_argument('-v', help='More output including GET/POST progress', action='store_true')
 parser.add_argument('-q', '--quiet', help='Suppress normal output', action='store_true')
 parser.add_argument('--unzip', help='Also unzip', action='store_true')
 
-def download_fares_feed(username, password, unzip=False):
-    log = logging.getLogger('download_fares_feed')
+def download_atoc_feeds(username, password, unzip=False):
+    log = logging.getLogger('download_atoc_feeds')
     br = mechanicalsoup.StatefulBrowser(soup_config={'features': 'lxml'})
-    log.debug('Downloading rdg fares feed from http://data.atoc.org/')
+    log.debug('Downloading rdg feeds from http://data.atoc.org/')
     br.open('http://data.atoc.org/?q=user')  # or http://data.atoc.org/user/login?current=node/1
     br.select_form('#user-login')
     br['name'] = username
@@ -37,28 +37,42 @@ def download_fares_feed(username, password, unzip=False):
     else:
         log.info('Login successful, attempting download')
     br.open('http://data.atoc.org/data-download')
+    found = 0
     for l in br.links():
         log.debug('Examining link: %r ' % (l))
         url = br.absolute_url(l['href'])
         fname = url.rsplit('/')[-1]
         if fname.startswith('RJFA') and fname.lower().endswith('.zip'):
             if fname.startswith('RJFAF'):
-                break
+                download_url(br, url, unzip)  # Fares Feed (full)
+                found += 1
             elif fname.startswith('RJFAC'):
                 log.warning('rdg incremental-changes fares feed available: %s' % (fname))
             else:
                 log.error('rdg unknown fares feed available: %s' % (fname))
-    else:
-        log.error('Fares url not found')
-        sys.exit(1)
+        elif fname.startswith('ttis') and fname.lower().endswith('.zip'):
+            download_url(br, url, unzip)  # Timetable Feed
+            found += 1
+        elif fname.startswith('ltm') and fname.lower().endswith('.zip'):
+            download_url(br, url, unzip)  # London Terminals Feed
+            found += 1
+    if found != 3:
+        if found == 0:
+            log.error('No feed urls found')
+            sys.exit(1)
+        else:
+            log.warning('Some feeds not found')
+
+def download_url(br, url, unzip):
+    log = logging.getLogger('download_url')
     response = br.open(url)
-    if unzip:
+    if unzip and url.lower().endswith('zip'):
         zz = ZipFile(BytesIO(response.content))
-        feeds_path = os.path.join(os.getcwd(), 'feeds', 'fares')
+        feeds_path = os.path.join(os.getcwd(), 'feeds', url.split('/')[-1][:4])
         zz.extractall(feeds_path)
         log.info('Extracted all files to %s' % feeds_path)
     else:
-        zip_path = os.path.join(os.getcwd(), 'feeds', fname)
+        zip_path = os.path.join(os.getcwd(), 'feeds', url.split('/')[-1])
         with open(zip_path, 'wb') as zf:
             zf.write(response.content)
             log.info('Downloaded to %s' % (zip_path))
@@ -76,7 +90,7 @@ if __name__ == '__main__':
 
     creds = get_rdg_credentials(args)
     if creds['username'] and creds['password']:
-        download_fares_feed(creds['username'], creds['password'], args['unzip'])
+        download_atoc_feeds(creds['username'], creds['password'], args['unzip'])
     else:
         if 'username' not in creds:
             log.error("### Couldn't find a username")

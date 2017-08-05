@@ -26,4 +26,4 @@ run
 ```
 ./download_raw
 ```
-to download fares feed to ./feeds/fares subfolder
+to download all available feeds to ./feeds/ subfolder
