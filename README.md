@@ -2,7 +2,7 @@ Import UK Rail data to a Postgresql Backend
 
 ## Prerequisites
 
-Register with RDG to get login credentials at http://data.atoc.org/
+Register with RDG to get login credentials at https://dtdportal.atocrsp.org/ (or http://data.atoc.org/)
 
 ```
 sudo apt install python3 python3-venv

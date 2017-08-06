@@ -8,20 +8,21 @@ if __name__ == '__main__':
     print('Enter your login credentials for data.atoc.org')
     print('(These will be stored locally in local.cfg)')
     existing = read_config()
-    if existing and CRED in existing and existing[CRED].get('username', None):
-        username = input('atoc username (existing: %s): ' % (existing[CRED]['username']))
-        if not username.strip():
-            username = existing[CRED]['username']
-    else:
-        username = input('atoc username: ')
-    if existing and CRED in existing and existing[CRED]['password']:
-        password = input('atoc password (leave empty to keep existing): ')  # plaintext input as it will be stored as plaintext in local.cfg
-        if not password.strip():
-            password = existing[CRED]['password']
-    else:
-        password = input('atoc password: ')
-
     config = configparser.ConfigParser()
-    config[CRED] = OrderedDict((('username', username), ('password', password)))
+    for site in ['dtdportal.atocrsp.org', 'data.atoc.org']:
+        SITE_CRED = site + ' ' + CRED
+        if existing and SITE_CRED in existing and existing[SITE_CRED].get('username', None):
+            username = input('%s username (existing: %s): ' % (site, existing[SITE_CRED]['username']))
+            if not username.strip():
+                username = existing[SITE_CRED]['username']
+        else:
+            username = input('%s username: ' % (site))
+        if existing and SITE_CRED in existing and existing[SITE_CRED]['password']:
+            password = input('%s password (leave empty to keep existing): ' % (site))  # plaintext input as it will be stored as plaintext in local.cfg
+            if not password.strip():
+                password = existing[SITE_CRED]['password']
+        else:
+            password = input('%s password: ' % (site))
+        config[SITE_CRED] = OrderedDict((('username', username), ('password', password)))
     with open('local.cfg', 'w') as configfile:
         config.write(configfile)
