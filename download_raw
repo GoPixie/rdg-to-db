@@ -2,6 +2,7 @@
 
 import os
 import sys
+import re
 import argparse
 from zipfile import ZipFile
 import mechanicalsoup
@@ -17,10 +18,11 @@ parser.add_argument('-u', '--username', metavar='USERNAME', help='Your dtdportal
 parser.add_argument('-v', help='More output including GET/POST progress', action='store_true')
 parser.add_argument('-q', '--quiet', help='Suppress normal output', action='store_true')
 parser.add_argument('--unzip', help='Also unzip', action='store_true')
+parser.add_argument('--force', help="Always download even if there's already a local file with the same name (& version)", action='store_true')
 parser.add_argument('--datadotatoc', help="Download from data.atoc.org (doesn't include Routeing data). The default is dtdportal.atocrsp.org", action='store_true')
 
 
-def download_atocrsp_feeds(username, password, unzip=False):
+def download_atocrsp_feeds(username, password, unzip=False, force=False):
     """
     https://dtdportal.atocrsp.org/, registration and license agreement required
     ROUTEING_GUIDE data only available here
@@ -80,12 +82,12 @@ def download_atocrsp_feeds(username, password, unzip=False):
             log.warning('%s: Need to manually download test feed and confirm' % (feed_name))
         else:
             top_row = page.select('.ui-datatable-data tr')[0]  # assumed to be most recent
-            if top_row.find('a').text.lower() == 'download':
-                download_url(br, br.absolute_url(top_row.find('a')['href']), unzip)
+            if top_row.find('a') and top_row.find('a').text.lower() == 'download':
+                download_url(br, br.absolute_url(top_row.find('a')['href']), unzip, force)
             else:
                 log.warning("%s: Can't find a download link in top row" % (feed_name))
 
-def download_data_dot_atoc_feeds(username, password, unzip=False):
+def download_data_dot_atoc_feeds(username, password, unzip=False, force=False):
     """
     http://data.atoc.org/, registration required
     London Terminals Feed only available here
@@ -115,17 +117,17 @@ def download_data_dot_atoc_feeds(username, password, unzip=False):
         fname = url.rsplit('/')[-1]
         if fname.startswith('RJFA') and fname.lower().endswith('.zip'):
             if fname.startswith('RJFAF'):
-                download_url(br, url, unzip)  # Fares Feed (full)
+                download_url(br, url, unzip, force)  # Fares Feed (full)
                 found += 1
             elif fname.startswith('RJFAC'):
                 log.warning('rdg incremental-changes fares feed available: %s' % (fname))
             else:
                 log.error('rdg unknown fares feed available: %s' % (fname))
         elif fname.startswith('ttis') and fname.lower().endswith('.zip'):
-            download_url(br, url, unzip)  # Timetable Feed
+            download_url(br, url, unzip, force)  # Timetable Feed
             found += 1
         elif fname.startswith('ltm') and fname.lower().endswith('.zip'):
-            download_url(br, url, unzip)  # London Terminals Feed
+            download_url(br, url, unzip, force)  # London Terminals Feed
             found += 1
     if found != 3:
         if found == 0:
@@ -134,10 +136,10 @@ def download_data_dot_atoc_feeds(username, password, unzip=False):
         else:
             log.warning('Some feeds not found')
 
-def download_url(br, url, unzip):
+def download_url(br, url, unzip, force=False):
     log = logging.getLogger('download_url')
-    response = br.open(url)
     if unzip and url.lower().endswith('zip'):
+        response = br.open(url)
         zz = ZipFile(BytesIO(response.content))
         feeds_path = os.path.join(os.getcwd(), 'feeds', url.split('/')[-1][:4])
         zz.extractall(feeds_path)
@@ -145,9 +147,14 @@ def download_url(br, url, unzip):
     else:
         fname = url.split('?')[0].split('/')[-1]
         zip_path = os.path.join(os.getcwd(), 'feeds', fname)
-        with open(zip_path, 'wb') as zf:
-            zf.write(response.content)
-            log.info('Downloaded to %s' % (zip_path))
+        is_versioned = re.search('[0-9][0-9][0-9]', fname)
+        if not force and is_versioned and fname and os.path.exists(zip_path):
+            log.info('Found existing local file: %s' % (zip_path))
+        else:
+            response = br.open(url)
+            with open(zip_path, 'wb') as zf:
+                zf.write(response.content)
+                log.info('Downloaded to %s' % (zip_path))
 
 if __name__ == '__main__':
     args = vars(parser.parse_args())
@@ -164,9 +171,9 @@ if __name__ == '__main__':
     creds = get_rdg_credentials(args, site)
     if creds['username'] and creds['password']:
         if site == 'dtdportal.atocrsp.org':
-            download_atocrsp_feeds(creds['username'], creds['password'], args['unzip'])
+            download_atocrsp_feeds(creds['username'], creds['password'], args['unzip'], args['force'])
         elif site == 'data.atoc.org':
-            download_data_dot_atoc_feeds(creds['username'], creds['password'], args['unzip'])
+            download_data_dot_atoc_feeds(creds['username'], creds['password'], args['unzip'], args['force'])
     else:
         if 'username' not in creds:
             log.error("### Couldn't find a username")
