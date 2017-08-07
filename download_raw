@@ -91,6 +91,9 @@ def download_data_dot_atoc_feeds(username, password, unzip=False, force=False):
     """
     http://data.atoc.org/, registration required
     London Terminals Feed only available here
+
+    "for use in proof of concept or development work"
+    according to https://www.raildeliverygroup.com/our-services/rail-data/fares-data.html
     """
     log = logging.getLogger('download_data_dot_atoc_feeds')
     br = mechanicalsoup.StatefulBrowser(soup_config={'features': 'lxml'})
