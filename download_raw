@@ -9,6 +9,7 @@ import mechanicalsoup
 import logging
 from colorlog import ColoredFormatter
 from io import BytesIO
+import json
 
 from lib.config import read_config, get_rdg_credentials
 
@@ -21,6 +22,7 @@ parser.add_argument('--unzip', help='Also unzip', action='store_true')
 parser.add_argument('--force', help="Always download even if there's already a local file with the same name (& version)", action='store_true')
 parser.add_argument('--datadotatoc', help="Download from data.atoc.org (doesn't include Routeing data). The default is dtdportal.atocrsp.org", action='store_true')
 
+spec = json.load(open('spec.json', 'r'))
 
 def download_atocrsp_feeds(username, password, unzip=False, force=False):
     """
@@ -158,6 +160,12 @@ def download_url(br, url, unzip, force=False):
             with open(zip_path, 'wb') as zf:
                 zf.write(response.content)
                 log.info('Downloaded to %s' % (zip_path))
+        if fname[4] != 'C' and fname[:4] in spec.keys():
+            latest_path = os.path.join(os.getcwd(), 'feeds', fname[:4]+'-FULL-LATEST.ZIP')
+            if os.path.exists(latest_path):
+                os.unlink(latest_path)
+            os.link(zip_path, latest_path)
+
 
 if __name__ == '__main__':
     args = vars(parser.parse_args())
