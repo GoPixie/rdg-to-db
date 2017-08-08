@@ -10,6 +10,7 @@ from colorlog import ColoredFormatter
 import json
 
 from lib.config import get_rdg_credentials
+from lib.util import json_comment_filter
 
 parser = argparse.ArgumentParser(
     description="Download raw Timetables, Fares & Routeing zip files from"
@@ -38,7 +39,7 @@ arg(
     help="Download from data.atoc.org (doesn't include Routeing data). "
     "The default is dtdportal.atocrsp.org")
 
-spec = json.load(open('spec.json', 'r'))
+spec = json_comment_filter(json.load(open('spec.json', 'r')))
 
 
 def download_atocrsp_feeds(username, password=False, force=False):
