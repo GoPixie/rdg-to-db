@@ -4,10 +4,12 @@ from collections import OrderedDict
 
 CRED = 'Login Credentials'
 
+
 def read_config():
     config = configparser.SafeConfigParser()
     config.read('local.cfg')
     return config
+
 
 def get_rdg_credentials(args, site):
     r = {}
@@ -30,7 +32,10 @@ def get_rdg_credentials(args, site):
         y_or_no = input('Save these credentials in local.cfg? (y/n): ')
         if y_or_no.lower() == 'y':
             existing = read_config()
-            existing[SITE_CRED] = OrderedDict((('username', r['username']), ('password', r['password'])))
+            existing[SITE_CRED] = OrderedDict([
+                ('username', r['username']),
+                ('password', r['password'])
+            ])
             with open('local.cfg', 'w') as configfile:
                 existing.write(configfile)
     return r

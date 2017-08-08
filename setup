@@ -12,17 +12,19 @@ if __name__ == '__main__':
     for site in ['dtdportal.atocrsp.org', 'data.atoc.org']:
         SITE_CRED = site + ' ' + CRED
         if existing and SITE_CRED in existing and existing[SITE_CRED].get('username', None):
-            username = input('%s username (existing: %s): ' % (site, existing[SITE_CRED]['username']))
+            username = input('%s username (existing: %s): ' %
+                             (site, existing[SITE_CRED]['username']))
             if not username.strip():
                 username = existing[SITE_CRED]['username']
         else:
             username = input('%s username: ' % (site))
         if existing and SITE_CRED in existing and existing[SITE_CRED]['password']:
-            password = input('%s password (leave empty to keep existing): ' % (site))  # plaintext input as it will be stored as plaintext in local.cfg
+            # plaintext input as it will be stored as plaintext in local.cfg:
+            password = input('%s password (leave empty to keep existing): ' % (site))
             if not password.strip():
                 password = existing[SITE_CRED]['password']
         else:
             password = input('%s password: ' % (site))
-        config[SITE_CRED] = OrderedDict((('username', username), ('password', password)))
+        config[SITE_CRED] = OrderedDict([('username', username), ('password', password)])
     with open('local.cfg', 'w') as configfile:
         config.write(configfile)

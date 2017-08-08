@@ -11,18 +11,37 @@ from colorlog import ColoredFormatter
 from io import BytesIO
 import json
 
-from lib.config import read_config, get_rdg_credentials
+from lib.config import get_rdg_credentials
 
-parser = argparse.ArgumentParser(description='Download raw Timetables, Fares & Routeing zip files from https://dtdportal.atocrsp.org/ to a \'feeds\' subfolder.',
-                                 epilog='Tip: Run ./setup to store username and password locally for reuse')
-parser.add_argument('-u', '--username', metavar='USERNAME', help='Your dtdportal.atocrsp.org username (will prompt for password)')
-parser.add_argument('-v', help='More output including GET/POST progress', action='store_true')
-parser.add_argument('-q', '--quiet', help='Suppress normal output', action='store_true')
-parser.add_argument('--unzip', help='Also unzip', action='store_true')
-parser.add_argument('--force', help="Always download even if there's already a local file with the same name (& version)", action='store_true')
-parser.add_argument('--datadotatoc', help="Download from data.atoc.org (doesn't include Routeing data). The default is dtdportal.atocrsp.org", action='store_true')
+parser = argparse.ArgumentParser(
+    description="Download raw Timetables, Fares & Routeing zip files from"
+    "https://dtdportal.atocrsp.org/ to a 'feeds' subfolder.",
+    epilog='Tip: Run ./setup to store username and password locally for reuse')
+
+arg = parser.add_argument
+arg(
+    '-u', '--username', metavar='USERNAME',
+    help='Your dtdportal.atocrsp.org username (will prompt for password)')
+arg(
+    '-v',
+    help='More output including GET/POST progress', action='store_true')
+arg(
+    '-q', '--quiet',
+    help='Suppress normal output', action='store_true')
+arg(
+    '--unzip', action='store_true',
+    help='Also unzip')
+arg(
+    '--force', action='store_true',
+    help="Always download even if there's already a local "
+    "file with the same name (& version)")
+arg(
+    '--datadotatoc', action='store_true',
+    help="Download from data.atoc.org (doesn't include Routeing data). "
+    "The default is dtdportal.atocrsp.org")
 
 spec = json.load(open('spec.json', 'r'))
+
 
 def download_atocrsp_feeds(username, password, unzip=False, force=False):
     """
@@ -36,7 +55,6 @@ def download_atocrsp_feeds(username, password, unzip=False, force=False):
     br.select_form('form.login')
     page = br.get_current_page()
     login_form_id = page.find('form', class_='login')['id']
-    hidden_input_value = page.select('form#'+login_form_id+' input[name="'+login_form_id+']"')[0]['value']
     br[login_form_id+':username'] = username
     br[login_form_id+':password'] = password
     login_form = br.get_current_form().form
@@ -44,7 +62,8 @@ def download_atocrsp_feeds(username, password, unzip=False, force=False):
     for button in login_form.select('button'):
         if button.text.lower().strip() == 'login':
             login_button_found = True
-            br.get_current_form().set(button['name'], button.get('value', ''), force=True)  # mechanicalsoup ignores <button> (have submitted patch)
+            # mechanicalsoup ignores <button> (have submitted patch)
+            br.get_current_form().set(button['name'], button.get('value', ''), force=True)
         else:
             del button['name']  # so only one action is submitted
 
@@ -71,7 +90,7 @@ def download_atocrsp_feeds(username, password, unzip=False, force=False):
         row_nice = ' '.join([td.text for td in row.findAll('td')])
         log.debug('Examining row: %r ' % (row_nice))
         if 'APPROVED' not in row.text:
-            log.warning('Not approved: '+ row_nice)
+            log.warning('Not approved: ' + row_nice)
         else:
             feed_to_visit.append((row.find('td').text, br.absolute_url(row.find('a')['href'])))
     if not feed_to_visit:
@@ -89,6 +108,7 @@ def download_atocrsp_feeds(username, password, unzip=False, force=False):
             else:
                 log.warning("%s: Can't find a download link in top row" % (feed_name))
 
+
 def download_data_dot_atoc_feeds(username, password, unzip=False, force=False):
     """
     http://data.atoc.org/, registration required
@@ -100,7 +120,7 @@ def download_data_dot_atoc_feeds(username, password, unzip=False, force=False):
     log = logging.getLogger('download_data_dot_atoc_feeds')
     br = mechanicalsoup.StatefulBrowser(soup_config={'features': 'lxml'})
     log.debug('Downloading rdg feeds from http://data.atoc.org/')
-    br.open('http://data.atoc.org/?q=user')  # or http://data.atoc.org/user/login?current=node/1
+    br.open('http://data.atoc.org/?q=user')  # or /user/login?current=node/1
     br.select_form('#user-login')
     br['name'] = username
     br['pass'] = password
@@ -140,6 +160,7 @@ def download_data_dot_atoc_feeds(username, password, unzip=False, force=False):
             sys.exit(1)
         else:
             log.warning('Some feeds not found')
+
 
 def download_url(br, url, unzip, force=False):
     log = logging.getLogger('download_url')
@@ -182,10 +203,13 @@ if __name__ == '__main__':
     creds = get_rdg_credentials(args, site)
     if creds['username'] and creds['password']:
         if site == 'dtdportal.atocrsp.org':
-            download_atocrsp_feeds(creds['username'], creds['password'], args['unzip'], args['force'])
+            download_atocrsp_feeds(
+                creds['username'], creds['password'], args['unzip'], args['force'])
         elif site == 'data.atoc.org':
-            download_data_dot_atoc_feeds(creds['username'], creds['password'], args['unzip'], args['force'])
+            download_data_dot_atoc_feeds(
+                creds['username'], creds['password'], args['unzip'], args['force'])
     else:
+        log = logging.getLogger('download_raw')
         if 'username' not in creds:
             log.error("### Couldn't find a username")
         if 'password' not in creds:
