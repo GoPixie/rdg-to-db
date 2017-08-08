@@ -1,6 +1,7 @@
 import configparser
 from getpass import getpass
 from collections import OrderedDict
+import logging
 
 CRED = 'Login Credentials'
 
@@ -12,6 +13,7 @@ def read_config():
 
 
 def get_rdg_credentials(args, site):
+    log = logging.getLogger('download')
     r = {}
     if args.get('username', None):
         r['username'] = args['username']
@@ -23,6 +25,10 @@ def get_rdg_credentials(args, site):
         if config[SITE_CRED].get('password', '').strip():
             r['password'] = config[SITE_CRED]['password']
     if 'username' not in r or 'password' not in r:
+        if args['quiet']:
+            log.error("You need to have already stored login credentials to run quiet/automatically")
+            import sys
+            sys.exit(1)
         if 'username' not in r:
             r['username'] = input('%s username: ' % (site))
             if 'password' not in r:
