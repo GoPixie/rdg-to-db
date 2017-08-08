@@ -26,6 +26,6 @@ Optionally store RDG username/password:
 
 run
 ```
-./download_raw
+./download
 ```
 to download all available feeds to ./feeds/ subfolder

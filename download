@@ -13,7 +13,7 @@ from lib.config import get_rdg_credentials
 from lib.util import json_comment_filter
 
 parser = argparse.ArgumentParser(
-    description="Download raw Timetables, Fares & Routeing zip files from"
+    description="Download Timetables, Fares & Routeing zip files from"
     "https://dtdportal.atocrsp.org/ to a 'feeds' subfolder.",
     epilog='Tip: Run ./setup to store username and password locally for reuse')
 
@@ -204,7 +204,7 @@ if __name__ == '__main__':
             from targets import unzip
             unzip(spec.keys())
     else:
-        log = logging.getLogger('download_raw')
+        log = logging.getLogger('download')
         if 'username' not in creds:
             log.error("### Couldn't find a username")
         if 'password' not in creds:
