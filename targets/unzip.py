@@ -5,10 +5,14 @@ import shutil
 from zipfile import ZipFile
 from collections import defaultdict
 
+from lib.util import json_comment_filter
 
 
-def unzip(file_prefixes):
+def unzip(file_prefixes=None):
     log = logging.getLogger('targets_unzip')
+    if not file_prefixes:
+        file_fields = json_comment_filter(json.load(open('file-fields.json', 'r')))
+        file_prefixes = file_fields.keys()
     for ftname in file_prefixes:
         if ftname.lower().endswith('.zip'):
             zipfilename = ftname

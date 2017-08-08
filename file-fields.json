@@ -1,0 +1,137 @@
+{
+    "//": "'//' is a comment hack (duplicate '//' keys are discarded according to the JSON spec)",
+    "//": "(Should probably be writing this in YAML)",
+    "//": "UPDATE_MARKER and RECORD_TYPE fields have been omitted from spec below as they are inferred. Probably better to have them here (explicit is better than implicit)",
+    "RJFA": { "//": "Fares and Associated Data: https://www.raildeliverygroup.com/our-services/rail-data/fares-data.html & http://data.atoc.org/fares-data",
+        "FFL": { "//": "Flow",
+            "F": [["ORIGIN_CODE", 4], ["DESTINATION_CODE", 4], ["ROUTE_CODE", 5], ["STATUS_CODE", 3], ["USAGE_CODE", 1], ["DIRECTION", 1], ["END_DATE", 8], ["START_DATE", 8], ["TOC", 3], ["CROSS_LONDON_IND", 1], ["NS_DISC_IND", 1], ["PUBLICATION_IND", 1], ["FLOW_ID", 7]],
+            "T": [["FLOW_ID", 7], ["TICKET_CODE", 3], ["FARE", 8], ["RESTRICTION_CODE", 2]]
+        },
+        "FSC": { "//": "Station Cluster",
+            "": [["CLUSTER_ID", 4], ["CLUSTER_NLC", 4], ["END_DATE", 8], ["START_DATE", 8]]
+        },
+        "NDF": { "//": "Non derivable fares",
+            "": [["ORIGIN_CODE", 4], ["DESTINATION_CODE", 4], ["ROUTE_CODE", 5], ["RAILCARD_CODE", 3], ["TICKET_CODE", 3], ["ND_RECORD_TYPE", 1], ["END_DATE", 8], ["START_DATE", 8], ["QUOTE_DATE", 8], ["SUPPRESS_MKR", 1], ["ADULT_FARE", 8], ["CHILD_FARE", 8], ["RESTRICTION_CODE", 2], ["COMPOSITE_INDICATOR", 1], ["CROSS_LONDON_IND", 1], [" PS_IND", 1]]
+        },
+        "NFO": { "//": "Non derivable fares overrides",
+            "": [["ORIGIN_CODE", 4], ["DESTINATION_CODE", 4], ["ROUTE_CODE", 5], ["RAILCARD_CODE", 3], ["TICKET_CODE", 3], ["ND_RECORD_TYPE", 1], ["END_DATE", 8], ["START_DATE", 8], ["QUOTE_DATE", 8], ["SUPPRESS_MKR", 1], ["ADULT_FARE", 8], ["CHILD_FARE", 8], ["RESTRICTION_CODE", 2], ["COMPOSITE_INDICATOR", 1], ["CROSS_LONDON_IND", 1], [" PS_IND", 1]]
+        },
+        "FNS": { "//": "Non standard discounts",
+            "": [["ORIGIN_CODE", 4], ["DESTINATION_CODE", 4], ["ROUTE_CODE", 5], ["RAILCARD_CODE", 3], ["TICKET_CODE", 3], ["END_DATE", 8], ["START_DATE", 8], ["QUOTE_DATE", 8], ["USE_NLC", 4], ["ADULT_NODIS_FLAG", 1], ["ADULT_ADD_ON_AMOUNT", 8], ["ADULT_REBOOK_FLAG", 1], ["CHILD_NODIS_FLAG", 1], ["CHILD_ADD_ON_AMOUNT", 8], ["CHILD_REBOOK_FLAG", 1]]
+        },
+        "TTY": { "//": "Ticket types",
+            "": [["TICKET_CODE", 3], ["END_DATE", 8], ["START_DATE", 8], ["QUOTE_DATE", 8], ["DESCRIPTION", 15], ["TKT_CLASS", 1], ["TKT_TYPE", 1], ["TKT_GROUP", 1], ["LAST_VALID_DAY", 8], ["MAX_PASSENGERS", 3], ["MIN_PASSENGERS", 3], ["MAX_ADULTS", 3], ["MIN_ADULTS", 3], ["MAX_CHILDREN", 3], ["MIN_CHILDREN", 3], ["RESTRICTED_BY_DATE", 1], ["RESTRICTED_BY_TRAIN", 1], ["RESTRICTED_BY_AREA", 1], ["VALIDITY_CODE", 2], ["ATB_DESCRIPTION", 20], ["LUL_XLONDON_ISSUE", 1], ["RESERVATION_REQUIRED", 1], ["CAPRI_CODE", 3], ["LUL_93", 1], ["UTS_CODE", 2], ["TIME_RESTRICTION", 1], ["FREE_PASS_LUL", 1], ["PACKAGE_MKR", 1], ["FARE_MULTIPLIER", 3], ["DISCOUNT_CATEGORY", 2]]
+        },
+        "TVL": { "//": "Ticket validity",
+            "": [["VALIDITY_CODE", 2], ["END_DATE", 8], ["START_DATE", 8], ["DESCRIPTION", 20], ["OUT_DAYS", 2], ["OUT_MONTHS", 2], ["RET_DAYS", 2], ["RET_MONTHS", 2], ["RET_AFTER_DAYS", 2], ["RET_AFTER_MONTHS", 2], ["RET_AFTER_DAY", 2], ["BREAK_OUT", 1], ["BREAK_RTN", 1], ["OUT_DESCRIPTION", 14], ["RTN_DESCRIPTION", 14]]
+        },
+        "TJS": { "//": "Journey segments",
+            "": [["JS_CODE", 3], ["END_DATE", 8], ["START_DATE", 8], ["LINE", 3], ["START", 2], ["END", 2]]
+        },
+        "TPB": { "//": "Ticket publication data (todo)"},
+        "TPN": { "//": "Print formats (todo)", "P": [], "T": [] },
+        "TCL": { "//": "Class Legends (todo)" },
+        "TRR": { "//": "Rail Rovers (todo)" },
+        "TPK": { "//": "Packages",
+            "P": [["PACKAGE_CODE", 3], ["END_DATE", 8], ["START_DATE", 8], ["QUOTE_DATE", 8], ["RESTRICTION_CODE", 2], ["ORIGIN_FACILITIES", 26], ["DESTINATION_FACILITIES", 26]],
+            "S": [["PACKAGE_CODE", 3], ["END_DATE", 8], ["SUPPLEMENT_CODE", 3], ["DIRECTION", 1], ["PACK_NUMBER", 3], ["ORIGIN_FACILITY", 1], ["DEST_FACILITY", 1]]
+        },
+        "SUP": { "//": "Supplements",
+            "R": [["RULE_NUMBER", 3], ["END_DATE", 8], ["START_DATE", 8], ["QUOTE_DATE", 8], ["TRAIN_UID", 7], ["TRAIN_UID_DESC", 39], ["FARE_CLASS", 1], ["QUOTA", 1], ["WEEKEND_FIRST", 1], ["SILVER_STANDARD", 1], ["RAILCARD", 1], ["CATERING_CODE", 1], ["SLEEPER", 1], ["ACCOM_CLASS", 1], ["STATUS", 1], ["RESERVATION_STATUS", 3], ["SECTORS", 3]],
+            "//": "Rule applies:",
+            "A": [["RULE_NUMBER", 3], ["END_DATE", 8], ["IE_MARKER", 1], ["CONDITION_TYPE", 1], ["IE_CODE", 3]],
+            "//": "Rule Supplement:",
+            "M": [["RULE_NUMBER", 3], ["END_DATE", 8], ["SUPPLEMENT_CODE", 3], ["OM_FLAG", 1]],
+            "//": "Supplement:",
+            "S": [["SUPPLEMENT_CODE", 3], ["END_DATE", 8], ["START_DATE", 8], ["QUOTE_DATE", 8], ["DESCRIPTION", 20], ["SHORT_DESC", 12], ["SUPPL_TYPE", 3], ["PRICE", 5], ["CPF_TICKET_TYPE", 5], ["MIN_GROUP_SIZE", 1], ["MAX_GROUP_SIZE", 1], ["PER_LEG_OR_DIR", 1], ["CLASS_TYPE", 1], ["CAPRI_CODE", 3], ["SEP_TKT_IND", 1], ["RESVN_TYPE", 2], ["SUNDRY_CODE", 5]],
+            "//": "Supplement Override:",
+            "O": [["SUPPLEMENT_CODE", 3], ["END_DATE", 8], ["OVERRIDDEN_SUPPLEMENT", 3]]
+        },
+        "RLC": { "//": "Railcards",
+            "": [["RAILCARD_CODE", 3], ["END_DATE", 8], ["START_DATE", 8], ["QUOTE_DATE", 8], ["HOLDER_TYPE", 1], ["DESCRIPTION", 20], ["RESTRICTED_BY_ISSUE", 1], ["RESTRICTED_BY_AREA", 1], ["RESTRICTED_BY_TRAIN", 1], ["RESTRICTED_BY_DATE", 1], ["MASTER_CODE", 3], ["DISPLAY_FLAG", 1], ["MAX_PASSENGERS", 3], ["MIN_PASSENGERS", 3], ["MAX_HOLDERS", 3], ["MIN_HOLDERS", 3], ["MAX_ACC_ADULTS", 3], ["MIN_ACC_ADULTS", 3], ["MAX_ADULTS", 3], ["MIN_ADULTS", 3], ["MAX_CHILDREN", 3], ["MIN_CHILDREN", 3], ["PRICE", 8], ["DISCOUNT_PRICE", 8], ["VALIDITY_PERIOD", 4], ["LAST_VALID_DATE", 8], ["PHYSICAL_CARD", 1], ["CAPRI_TICKET_TYPE", 3], ["ADULT_STATUS", 3], ["CHILD_STATUS", 3], ["AAA_STATUS", 3]]
+        },
+        "RCM": { "//": "Railcard Minimum Fares",
+            "": [["RAILCARD_CODE", 3], ["TICKET_CODE", 3], ["END_DATE", 8], ["START_DATE", 8], ["MINIMUM_FARE", 8]]
+        },
+        "DIS": { "//": "status discounts (standard discounts)",
+            "S": [["STATUS_CODE", 3], ["END_DATE", 8], ["START_DATE", 8], ["ATB_DESC", 5], ["CC_DESC", 5], ["UTS_CODE", 1], ["FIRST_SINGLE_MAX_FLAT", 8], ["FIRST_RETURN_MAX_FLAT", 8], ["STD_SINGLE_MAX_FLAT", 8], ["STD_RETURN_MAX_FLAT", 8], ["FIRST_LOWER_MIN", 8], ["FIRST_HIGHER_MIN", 8], ["STD_LOWER_MIN", 8], ["STD_HIGHER_MIN", 8], ["FS_MKR", 1], ["FR_MKR", 1], ["SS_MKR", 1], ["SR_MKR", 1]],
+            "D": [["STATUS_CODE", 3], ["END_DATE", 8], ["DISCOUNT_CATEGORY", 2], ["DISCOUNT_INDICATOR", 1], ["DISCOUNT_PERCENTAGE", 3]]
+        },
+        "FRR": { "//": "Rounding rules",
+            "": [["RULE_NO", 2], ["END_DATE", 8], ["RULE_INDEX", 2], ["START_DATE", 8], ["MAX_AMOUNT", 8], ["ROUND_AMOUNT", 8]]
+        },
+        "RST": { "//": "Restrictions",
+            "//": "Restriction dates:",
+            "RD": [["CF_MKR", 1], ["START_DATE", 8], ["END_DATE", 8]],
+            "//": "Restriction header:",
+            "RH": [["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["DESCRIPTION", 30], ["DESC_OUT", 50], ["DESC_RTN", 50], ["TYPE_OUT", 1], ["TYPE_RTN", 1], ["CHANGE_IND", 1]],
+            "//": "Restriction header date bands:",
+            "HD": [["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["DATE_FROM", 4], ["DATE_TO", 4], ["DAYS", 7]],
+            "//": "Restriction header route locations:",
+            "HL": [["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["LOCATION_CRS_CODE", 3]],
+            "//": "Restriction header allowed changes:",
+            "HC": [["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["ALLOWED_CHANGE", 3]],
+            "//": "Restriction header additional restriction:",
+            "HA": [["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["ADDITIONAL_RESTRICTION", 2], ["ORIGIN", 3], ["DESTINATION", 3]],
+            "//": "Time restriction:",
+            "TR": [["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["SEQUENCE_NO", 4], ["OUT_RET", 1], ["TIME_FROM", 4], ["TIME_TO", 4], ["ARR_DEP_VIA", 1], ["LOCATION", 3], ["RSTR_TYPE", 1], ["TRAIN_TYPE", 1], ["MIN_FARE_FLAG", 1]],
+            "//": "Time restriction date bands:",
+            "TD": [["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["SEQUENCE_NO", 4], ["OUT_RET", 1], ["DATE_FROM", 4], ["DATE_TO", 4], ["DAYS", 7]],
+            "//": "Time Restriction toc record:",
+            "TT": [["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["SEQUENCE_NO", 4], ["OUT_RET", 1], ["TOC_CODE", 2]],
+            "//": "Time Restriction privilege data:",
+            "TP": [["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["SEQUENCE_NO", 4], ["OUT_RET", 1], ["BARRED_CLASS", 1], ["BARRED_TICKETS", 1], ["BARRED_SEASONS", 1], ["BARRED_FIRST", 1], ["FROM_LOCATION", 3], ["TO_LOCATION", 3]],
+            "//": "Time Restriction privilege pass exceptions:",
+            "TE": [["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["SEQUENCE_NO", 4], ["OUT_RET", 1], ["PASS_EXCEPTION", 1]],
+            "//": "Train Restriction:",
+            "SR": [["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["TRAIN_NO", 6], ["OUT_RET", 1], ["QUOTA_IND", 1], ["SLEEPER_IND", 1]],
+            "//": "Train Restriction Date Bands:",
+            "SD": [["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["TRAIN_NO", 6], ["OUT_RET", 1], ["DATE_FROM", 4], ["DATE_TO", 4], ["DAYS", 7]],
+            "//": "Train Restriction quota exemption:",
+            "SQ": [["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["TRAIN_NO", 6], ["OUT_RET", 1], ["LOCATION", 3], ["QUOTA_IND", 1], ["ARR_DEP", 1]],
+            "//": "Train Restriction privilege data:",
+            "SP": [["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["TRAIN_NO", 6], ["OUT_RET", 1], ["BARRED_CLASS", 1], ["BARRED_TICKETS", 1], ["BARRED_SEASONS", 1], ["BARRED_FIRST", 1], ["FROM_LOCATION", 3], ["TO_LOCATION", 3]],
+            "//": "Train Restriction privilege pass exceptions:",
+            "SE": [["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["TRAIN_NO", 6], ["OUT_RET", 1], ["PASS_EXCEPTION", 1]],
+            "//": "Railcard Restriction:",
+            "RR": [["CF_MKR", 1], ["RAILCARD_CODE", 3], ["SEQUENCE_NO", 4], ["TICKET_CODE", 3], ["ROUTE_CODE", 5], ["LOCATION", 3], ["RESTRICTION_CODE", 2], ["TOTAL_BAN", 1]],
+            "//": "Exception codes:",
+            "EC": [["CF_MKR", 1], ["EXCEPTION_CODE", 1], ["DESCRIPTION", 50]],
+            "//": "Ticket Calendar:",
+            "CA": [["CF_MKR", 1], ["TICKET_CODE", 3], ["CAL_TYPE", 1], ["ROUTE_CODE", 5], ["COUNTRY_CODE", 1], ["DATE_FROM", 4], ["DATE_TO", 4], ["DAYS", 7]]
+        },
+        "LOC": { "//": "Locations",
+            "L": [["UIC_CODE", 7], ["END_DATE", 8], ["START_DATE", 8], ["QUOTE_DATE", 8], ["ADMIN_AREA_CODE", 3], ["NLC_CODE", 4], ["DESCRIPTION", 16], ["CRS_CODE", 3], ["RESV_CODE", 5], ["ERS_COUNTRY", 2], ["ERS_CODE", 3], ["FARE_GROUP", 6], ["COUNTY", 2], ["PTE_CODE", 2], ["ZONE_NO", 4], ["ZONE_IND", 2], ["REGION", 1], ["HIERARCHY", 1], ["CC_DESC_OUT", 41], ["CC_DESC_RTN", 16], ["ATB_DESC_OUT", 60], ["ATB_DESC_RTN", 30], ["SPECIAL_FACILITIES", 26], ["LULXXX", 9], ["UTSXXX", 20]],
+            "//": "Associated Stations:",
+            "A": [["UIC_CODE", 7], ["END_DATE", 8], ["ASSOC_UIC_CODE", 7], ["ASSOC_CRS_CODE", 3]],
+            "//": "Railcard Geography:",
+            "R": [["UIC_CODE", 7], ["RAILCARD_CODE", 3], ["END_DATE", 8]],
+            "//": "TT Group Location:",
+            "G": [["GROUP_UIC_CODE", 7], ["END_DATE", 8], ["START_DATE", 8], ["QUOTE_DATE", 8], ["DESCRIPTION", 16], ["ERS_COUNTRY", 2], ["ERS_CODE", 3]],
+            "//": "Group Members:",
+            "M": [["GROUP_UIC_CODE", 7], ["END_DATE", 8], ["MEMBER_UIC_CODE", 7], ["MEMBER_CRS_CODE", 3]],
+            "//": "Synonym:",
+            "S": [["UIC_CODE", 7], ["END_DATE", 8], ["START_DATE", 8], ["DESCRIPTION", 16]]
+        },
+        "RTE": { "//": "Routes",
+            "R":
+                [["ROUTE_CODE", 5], ["END_DATE", 8], ["START_DATE", 8], ["QUOTE_DATE", 8], ["DESCRIPTION", 16], ["ATB_DESC_1", 35], ["ATB_DESC_2", 35], ["ATB_DESC_3", 35], ["ATB_DESC_4", 35], ["CC_DESC", 16], ["AAA-DESC", 41], ["UTS_MODE", 1], ["UTS_ZONE_1", 1], ["UTS_ZONE_2", 1], ["UTS_ZONE_3", 1], ["UTS_ZONE_4", 1], ["UTS_ZONE_5", 1], ["UTS_ZONE_6", 1], ["UTS_NORTH", 3], ["UTS_EAST", 3], ["UTS_SOUTH", 3], ["UTS_WEST", 3]],
+            "//": "Route include/exclude locations record:",
+            "L": [["ROUTE_CODE", 5], ["END_DATE", 8], ["ADMIN_AREA", 3], ["NLC_CODE", 4], ["CRS_CODE", 3], ["INCL_EXCL", 1]]
+        },
+        "TOC": { "//": "TOC (Train Operating Companies)",
+            "T": [["TOC_ID", 2], ["TOC_NAME", 30], ["RESERVATION_SYSTEM", 8], ["ACTIVE_INDICATOR", 1]],
+            "F": [["FARE_TOC_ID", 3], ["TOC_ID", 2], ["FARE_TOC_NAME", 30]]
+        },
+        "TSP": { "//": "TOC Specific Tickets",
+            "": [["TICKET_CODE", 3], ["RESTRICTION_CODE", 2], ["RESTRICTION_FLAG", 1], ["DIRECTION", 1], ["TOC_ID", 2], ["TOC_TYPE", 1], ["END_DATE", 8], ["START_DATE", 8], ["SLEEPER_MKR", 1], ["INC_EXC_STOCK", 1], ["STOCK_LIST", 40]]
+        },
+        "TAP": { "//": "Advance Purchase Tickets",
+            "": [["TICKET_CODE", 3], ["RESTRICTION_CODE", 2], ["RESTRICTION_FLAG", 1], ["TOC_ID", 2], ["END_DATE", 8], ["START_DATE", 8], ["CHECK_TYPE", 1], ["AP_DATA", 8], ["BOOKING_TIME", 4]]
+        }
+    },
+    "RJTT": { "//": "Timetable Information: https://www.raildeliverygroup.com/our-services/rail-data/timetable-data.html & http://data.atoc.org/how-to"
+    },
+    "RJRG": { "//": "Routeing Guide Data: https://www.raildeliverygroup.com/our-services/rail-data/routeing-guide-data.html & http://data.atoc.org/routeing-guide"
+    }
+}

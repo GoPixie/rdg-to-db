@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+
+import argparse
+import logging
+from colorlog import ColoredFormatter
+import json
+
+import targets
+
+parser = argparse.ArgumentParser(
+    description="Transform RDG feeds (Fares, Timetables, Routeing) "
+    "to CSV or a backend database according to a defined schema.")
+
+arg = parser.add_argument
+arg(
+    '-t', '--target', metavar='TARGET', default='csv',
+    choices=['csv', 'unzip'],
+    help='How to transform the feeds')
+arg(
+    '-v',
+    help='Debugging output and progress', action='store_true')
+arg(
+    '-q', '--quiet',
+    help='Suppress normal output', action='store_true')
+
+file_fields = json.load(open('file-fields.json', 'r'))
+
+if __name__ == '__main__':
+    args = vars(parser.parse_args())
+    if args['v']:
+        logging.root.setLevel(logging.DEBUG)
+    elif not args['quiet']:
+        logging.root.setLevel(logging.INFO)
+    formatter = ColoredFormatter("%(log_color)s%(message)s%(reset)s")
+    stream = logging.StreamHandler()
+    stream.setFormatter(formatter)
+    logging.root.addHandler(stream)
+    log = logging.getLogger('targets_csv')
+    getattr(targets, args['target'])()  # resolves to e.g. `targets.csv()`

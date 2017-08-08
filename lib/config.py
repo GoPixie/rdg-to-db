@@ -26,7 +26,10 @@ def get_rdg_credentials(args, site):
             r['password'] = config[SITE_CRED]['password']
     if 'username' not in r or 'password' not in r:
         if args['quiet']:
-            log.error("You need to have already stored login credentials to run quiet/automatically")
+            log.error(
+                "You need to have already stored login "
+                "credentials to run quiet/automatically"
+            )
             import sys
             sys.exit(1)
         if 'username' not in r:

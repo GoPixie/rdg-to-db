@@ -1,4 +1,4 @@
-Import UK Rail data to a Postgresql Backend
+Import UK Rail data to CSV. Other planned backends are postgresql and mysql ([open-track schema](https://github.com/open-track/dtd2mysql))
 
 [![Build Status](https://travis-ci.org/GoPixie/rdg-to-db.svg?branch=master)](https://travis-ci.org/GoPixie/rdg-to-db)
 
@@ -29,3 +29,12 @@ run
 ./download
 ```
 to download all available feeds to ./feeds/ subfolder
+
+
+## Data transform
+
+run
+```
+./transform
+```
+to convert files from fixed width format to CSV format and save them in the ./feeds/csv/ subfolder

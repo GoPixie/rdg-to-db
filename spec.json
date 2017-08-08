@@ -1,9 +1,0 @@
-{
-    "//": "'//' is a comment hack (duplicate '//' keys are discarded according to the JSON spec)",
-    "RJFA": { "//": "Fares and Associated Data: https://www.raildeliverygroup.com/our-services/rail-data/fares-data.html & http://data.atoc.org/fares-data"
-    },
-    "RJTT": { "//": "Timetable Information: https://www.raildeliverygroup.com/our-services/rail-data/timetable-data.html & http://data.atoc.org/how-to"
-    },
-    "RJRG": { "//": "Routeing Guide Data: https://www.raildeliverygroup.com/our-services/rail-data/routeing-guide-data.html & http://data.atoc.org/routeing-guide"
-    }
-}

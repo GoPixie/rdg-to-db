@@ -39,7 +39,7 @@ arg(
     help="Download from data.atoc.org (doesn't include Routeing data). "
     "The default is dtdportal.atocrsp.org")
 
-spec = json_comment_filter(json.load(open('spec.json', 'r')))
+file_fields = json_comment_filter(json.load(open('file-fields.json', 'r')))
 
 
 def download_atocrsp_feeds(username, password=False, force=False):
@@ -173,7 +173,7 @@ def download_url(br, url, force=False):
         with open(zip_path, 'wb') as zf:
             zf.write(response.content)
             log.info('Downloaded to %s' % (zip_path))
-    if fname[4] != 'C' and fname[:4] in spec.keys():
+    if fname[4] != 'C' and fname[:4] in file_fields.keys():
         latest_path = os.path.join(os.getcwd(), 'feeds', fname[:4]+'-FULL-LATEST.ZIP')
         if os.path.exists(latest_path):
             os.unlink(latest_path)
@@ -202,7 +202,7 @@ if __name__ == '__main__':
                 creds['username'], creds['password'], args['force'])
         if args['unzip']:
             from targets import unzip
-            unzip(spec.keys())
+            unzip(file_fields.keys())
     else:
         log = logging.getLogger('download')
         if 'username' not in creds:
