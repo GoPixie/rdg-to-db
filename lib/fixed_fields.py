@@ -10,7 +10,7 @@ def field_sum(field_pairs):
     return sum(f[1] for f in field_pairs)
 
 
-def iterate_fixed_fields(file_path, fields, RECORD_TYPE=None, full_only=True):
+def iterate_fixed_fields(file_path, fields, full_only=True):
     log = logging.getLogger('iterate_fixed_fields')
     file_sig = '/'.join(file_path.split('/')[-2:])
     log.debug('ingesting %s' % (file_sig))
