@@ -7,7 +7,7 @@ from multiprocessing import Pool
 from time import time as t_time
 
 from lib.util import json_comment_filter
-from lib.fixed_fields import iterate_fixed_fields
+from lib.fields import iterate_fields
 from targets.unzip import unzip
 
 
@@ -80,7 +80,7 @@ def file_to_csv(fprefix, filename, file_path=None, file_fields=None):
     csv_writers = {}
     try:
         fields = file_fields[fprefix][filename]
-        for record in iterate_fixed_fields(file_path, fields):
+        for record in iterate_fields(file_path, fields):
             k = record.get('RECORD_TYPE', '')
             if k not in csv_writers:
                 fsuffix = ''
@@ -89,9 +89,9 @@ def file_to_csv(fprefix, filename, file_path=None, file_fields=None):
                 csv_path = os.path.join(os.getcwd(), 'feeds', 'csv',
                                         fprefix + '-' + filename + fsuffix + '.csv')
                 csv_files[k] = open(csv_path, 'w')
-                csv_writers[k] = csv_module.DictWriter(
-                    csv_files[k],
-                    fieldnames=[f[0] for f in fields[k]])
+                fieldnames = [f[0] if not isinstance(f, str) else f for f in fields[k]]
+                fieldnames = [f for f in fieldnames if f != 'RECORD_TYPE']
+                csv_writers[k] = csv_module.DictWriter(csv_files[k], fieldnames=fieldnames)
                 csv_writers[k].writeheader()
             if k:
                 del record['RECORD_TYPE']  # contained in filename

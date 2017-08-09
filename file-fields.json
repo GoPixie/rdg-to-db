@@ -132,6 +132,48 @@
     },
     "RJTT": { "//": "Timetable Information: https://www.raildeliverygroup.com/our-services/rail-data/timetable-data.html & http://data.atoc.org/how-to"
     },
-    "RJRG": { "//": "Routeing Guide Data: https://www.raildeliverygroup.com/our-services/rail-data/routeing-guide-data.html & http://data.atoc.org/routeing-guide"
+    "RJRG": {  "//": "Routeing Guide Data: https://www.raildeliverygroup.com/our-services/rail-data/routeing-guide-data.html & http://data.atoc.org/routeing-guide",
+        "RGS": {  "//": "Station file"
+        },
+        "RGG": {  "//": "Station-Group file"
+        },
+        "RGP": {  "//": "Routeing point file"
+        },
+        "RGN": {  "//": "Node file"
+        },
+        "RGM": {  "//": "Map file"
+        },
+        "RGL": {  "//": "Link file"
+        },
+        "RGR": {  "//": "Permitted routes file"
+        },
+        "RGD": {  "//": "Station-Link file"
+        },
+        "RGE": {  "//": "Easement Text"
+        },
+        "RGF": {  "//": "Easement Definition"
+        },
+        "RGH": {  "//": "Easement TOC"
+        },
+        "RGK": {  "//": "Route Details and Route Data",
+            "//": "London Route:",
+            "L": ["ROUTE_CODE", "RECORD_TYPE", "LONDON_MARKER"],
+            "//": "Route Data:",
+            "D": ["ROUTE_CODE", "RECORD_TYPE", "ENTRY_TYPE", "CRS_CODE", "GROUP_MKR", "MODE_CODE", "TOC_ID"]
+        },
+        "RGC": {  "//": "London Stations"
+        },
+        "RGX": {  "//": "New Stations"
+        },
+        "RGY": {  "//": "Locations"
+        },
+        "RGV": {  "//": "Zonal routes"
+        },
+        "RGB": {  "//": "Zonal fare locations"
+        },
+        "RGA": {  "//": "Zonal system locations"
+        },
+        "RGI": {  "//": "Download Index"
+        }
     }
 }

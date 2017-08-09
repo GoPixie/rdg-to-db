@@ -13,10 +13,6 @@ def field_sum(field_pairs):
 def iterate_fixed_fields(file_path, fields, full_only=True):
     log = logging.getLogger('iterate_fixed_fields')
     file_sig = '/'.join(file_path.split('/')[-2:])
-    log.debug('ingesting %s' % (file_sig))
-    if not fields or not sum(fields.values(), []):
-        log.warning('No fields defined for %s' % (file_sig))
-        return
     with open(file_path, 'r') as f:
         last_fi = 0
         last_rtime = 0
