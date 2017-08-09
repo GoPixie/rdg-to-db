@@ -9,13 +9,16 @@ import targets
 
 parser = argparse.ArgumentParser(
     description="Transform RDG feeds (Fares, Timetables, Routeing) "
-    "to CSV or a backend database according to a defined schema.")
-
+    "to CSV or a backend database according to a defined schema.",
+    epilog='\n\ntargets:\n\n' + '\n'.join(['--target=%s %s' % (
+        f, getattr(targets, f).__doc__ or '(no documentation)') for f in targets.__all__]),
+    formatter_class=argparse.RawDescriptionHelpFormatter
+)
 arg = parser.add_argument
 arg(
     '-t', '--target', metavar='TARGET', default='csv',
-    choices=['csv', 'unzip'],
-    help='How to transform the feeds')
+    choices=targets.__all__,
+    help='How to transform the feeds (see below)')
 arg(
     '-v',
     help='Debugging output and progress', action='store_true')

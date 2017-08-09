@@ -72,7 +72,7 @@ Conversion is based on definitions found in the [`file-fields.json`](file-fields
 
 ## Contributing
 
-Pull requests and updates to [`file-fields.json`](file-fields.json) very welcome.
+Pull requests and updates to [`file-fields.json`](file-fields.json) very welcome. New backends can be added by creating something similar to `csv.py` in [/targets/](targets) (and updating imports at [/targets/__init__.py](targets/__init__.py))
 
 Test syntax according to .editorconfig and [pep8](https://www.python.org/dev/peps/pep-0008/):
 

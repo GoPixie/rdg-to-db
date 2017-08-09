@@ -11,6 +11,9 @@ from lib.util import json_comment_filter
 
 
 def unzip(file_prefixes=None):
+    """
+    Extract downloaded zip files into their own folder under /feeds/
+    """
     log = logging.getLogger('targets_unzip')
     stime = t_time()
     if not file_prefixes:

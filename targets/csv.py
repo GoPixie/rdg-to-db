@@ -12,6 +12,13 @@ from targets.unzip import unzip
 
 
 def csv(file_prefixes=None):
+    """
+    Transform each file in downloaded ZIP to csv format under /feeds/csv/
+    files with multiple record types are output to multiple csv files
+    e.g. /RJFAF123.TOC becomes
+        /feeds/csv/RJFA-TOC-T.CSV (main train operating company ids and names)
+        /feeds/csv/RJFA-TOC-F.CSV (additional toc fare ids)
+    """
     log = logging.getLogger('targets_csv')
     stime = t_time()
     csv_dir = os.path.join(os.getcwd(), 'feeds', 'csv')
