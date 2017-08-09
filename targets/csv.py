@@ -76,6 +76,8 @@ def file_to_csv(fprefix, filename, file_path=None, file_fields=None):
     """
     if file_path is None:
         file_path = os.path.join(os.getcwd(), 'feeds', fprefix, filename)
+    if file_fields is None:
+        file_fields = json_comment_filter(json.load(open('file-fields.json', 'r')))
     csv_files = {}
     csv_writers = {}
     try:
