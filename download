@@ -164,7 +164,10 @@ def download_data_dot_atoc_feeds(username, password=False, force=False):
 def download_url(br, url, force=False):
     log = logging.getLogger('download_url')
     fname = url.split('?')[0].split('/')[-1]
-    zip_path = os.path.join(os.getcwd(), 'feeds', fname)
+    feeds_dir = os.path.join(os.getcwd(), 'feeds')
+    if not os.path.exists(feeds_dir):
+        os.makedirs(feeds_dir)
+    zip_path = os.path.join(feeds_dir, fname)
     is_versioned = re.search('[0-9][0-9][0-9]', fname)
     if not force and is_versioned and fname and os.path.exists(zip_path):
         log.info('Found existing local file: %s' % (zip_path))
