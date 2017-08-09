@@ -4,7 +4,7 @@ Import UK Rail data to CSV. Other planned backends are postgresql and mysql ([op
 
 ## Prerequisites
 
-Register with RDG to get login credentials at https://dtdportal.atocrsp.org/ (or http://data.atoc.org/)
+Register with RDG to get login credentials at https://dtdportal.atocrsp.org/ (or http://data.atoc.org/ for the `./download --datadotatoc` option)
 
 ```
 sudo apt install python3 python3-venv
