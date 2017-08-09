@@ -59,4 +59,25 @@ run
 ```
 to convert files from fixed width format to CSV format and save them in the ./feeds/csv/ subfolder
 
-Conversion is based on definitions found in the [`file-fields.json`](https://github.com/GoPixie/rdg-to-db/blob/master/file-fields.json) file which is in turn transcribed from definitions found in RDG documents [SP0035](https://www.raildeliverygroup.com/our-services/rail-data/fares-data.html) (fares), [RSPS5046](https://www.raildeliverygroup.com/our-services/rail-data/timetable-data.html) (timetables) & [RSPS5047](https://www.raildeliverygroup.com/our-services/rail-data/routeing-guide-data.html) (routeing guide).
+Conversion is based on definitions found in the [`file-fields.json`](file-fields.json) file which is in turn transcribed from definitions found in RDG documents [SP0035](https://www.raildeliverygroup.com/our-services/rail-data/fares-data.html) (fares), [RSPS5046](https://www.raildeliverygroup.com/our-services/rail-data/timetable-data.html) (timetables) & [RSPS5047](https://www.raildeliverygroup.com/our-services/rail-data/routeing-guide-data.html) (routeing guide).
+
+
+## TODO
+
+ - Partial 'update only' files
+ - Set of minimal test ZIP files containing records for each record type
+ - mysql backend for ([open-track schema](https://github.com/open-track/dtd2mysql))
+ - postgresql backend using [daterange](https://www.postgresql.org/docs/9.2/static/rangetypes.html) and denormalizing output
+ - database functions or views which [calculate UK Fares](https://github.com/open-track/fares-service-php/wiki/Fare-Lookup) for a given origin/destination pair!
+
+## Contributing
+
+Pull requests and updates to [`file-fields.json`](file-fields.json) very welcome.
+
+Test syntax according to .editorconfig and [pep8](https://www.python.org/dev/peps/pep-0008/):
+
+    pip install flake8
+    npm install -g eclint
+
+    flake8 $( git grep -l '^#!/usr/bin/env python3' && git ls-files *.py ) --max-line-length=99
+    eclint check $( git ls-files )
