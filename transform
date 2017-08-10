@@ -20,6 +20,9 @@ arg(
     choices=targets.__all__,
     help='How to transform the feeds (see below)')
 arg(
+    '-s', '--source', metavar='TARGET', default='all',
+    help='Which feed type to transform (RJFA, RJTT or RJRG). Default is all.')
+arg(
     '-v',
     help='Debugging output and progress', action='store_true')
 arg(
@@ -39,4 +42,7 @@ if __name__ == '__main__':
     stream.setFormatter(formatter)
     logging.root.addHandler(stream)
     log = logging.getLogger('targets_csv')
-    getattr(targets, args['target'])()  # resolves to e.g. `targets.csv()`
+    file_prefixes = []
+    if args['source'] != 'all':
+        file_prefixes = args['source'].split(',')
+    getattr(targets, args['target'])(file_prefixes)  # resolves to e.g. `targets.csv()`
