@@ -20,18 +20,23 @@ def iterate_fields(file_path, fields, full_only=True):
             yield r
         return
 
-    RECORD_TYPE_positions = set(fv.index('RECORD_TYPE') for fv in fields.values())
+    RECORD_TYPE_positions = None
+    if len(fields) == 1 and list(fields.keys())[0] == '':
+        field_names = list(fields.values())[0]
+    else:
+        RECORD_TYPE_positions = set(fv.index('RECORD_TYPE') for fv in fields.values())
     with open(file_path, 'r') as f:
         for fi, line in enumerate(f.readlines()):
             if line.startswith('/'):
                 continue
             row = line.strip().split(',')
-            for pos in RECORD_TYPE_positions:
-                if row[pos] in fields:
-                    field_names = fields[row[pos]]
-                    break
-            else:
-                raise Exception('%s Unknown row type: %s' % (file_sig, line))
+            if RECORD_TYPE_positions:
+                for pos in RECORD_TYPE_positions:
+                    if row[pos] in fields:
+                        field_names = fields[row[pos]]
+                        break
+                else:
+                    raise Exception('%s Unknown row type: %s' % (file_sig, line))
             if len(row) != len(field_names):
                 raise Exception('%s Line "%s" (%d fields) doesn\'t match spec (%d fields): %r' % (
                     file_sig, line, len(row), len(field_names), field_names))

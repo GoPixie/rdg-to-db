@@ -165,7 +165,8 @@
         },
         "RGX": {  "//": "New Stations"
         },
-        "RGY": {  "//": "Locations"
+        "RGY": {  "//": "Locations",
+            "": ["UIC_CODE", "NLC_CODE", "GROUP_CODE", "CRS_CODE", "COUNTY_CODE", "ZONE_CODE", "START_DATE", "END_DATE"]
         },
         "RGV": {  "//": "Zonal routes"
         },
