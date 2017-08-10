@@ -58,8 +58,9 @@ def csv(file_prefixes=None):
                 csv_msg = ''
                 if csv_count > 1:
                     csv_msg = '- %d csv files' % (csv_count)
-                log.info('Finished processing %s/%s (%d of %d) %s' % (
-                    fprefix, filename, n, len(todo), csv_msg))
+                if csv_count > 0:
+                    log.info('Finished processing %s/%s (%d of %d) %s' % (
+                        fprefix, filename, n, len(todo), csv_msg))
                 n += 1
     log.debug('csv: %ds total time' % (t_time()-stime))
 
