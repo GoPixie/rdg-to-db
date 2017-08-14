@@ -4,13 +4,21 @@ import logging
 from .fixed_fields import iterate_fixed_fields
 
 
-def iterate_fields(file_path, fields, full_only=True):
+def iterate_fields(file_path, fields, convert_dates=True, full_only=True):
+    file_sig = '/'.join(file_path.split('/')[-2:])
     for r in _iterate_fields(file_path, fields, full_only):
         if full_only and 'UPDATE_MARKER' in r:
             if r['UPDATE_MARKER'] != 'R':
                 raise Exception('%s Expected full file, not'
                                 'changes Line "%s"' % (file_sig, ''.join(r.values())))
             del r['UPDATE_MARKER']
+        if convert_dates:
+            for k in r.keys():
+                if k.endswith('_DATE') and not k.endswith('_BY_DATE') and r[k]:
+                    if len(r[k]) != 8:
+                        raise Exception('%s Unexpected size for apparant date field %s %s %d' %
+                                        (file_sig, k, r[k], len(r[k])))
+                    r[k] = '-'.join([r[k][4:], r[k][2:4], r[k][:2]])
         yield r
 
 
