@@ -13,6 +13,23 @@ def field_sum(field_pairs):
 def iterate_fixed_fields(file_path, fields, full_only=True):
     log = logging.getLogger('iterate_fixed_fields')
     file_sig = '/'.join(file_path.split('/')[-2:])
+    record_type_pos = False
+    for v in fields.values():
+        field_names = [vi[0] for vi in v]
+        if 'RECORD_TYPE' not in field_names:
+            record_type_pos = False
+            break
+        field_values = [vi[1] for vi in v]
+        vpos = field_names.index('RECORD_TYPE')
+        v_pos_tup = (sum(field_values[:vpos]), sum(field_values[:vpos])+field_values[vpos])
+        if not record_type_pos:
+            record_type_pos = v_pos_tup
+        elif record_type_pos != v_pos_tup:
+            raise Exception('%s Multiple positions for RECORD_TYPE field. Bug in file-fields.json'
+                            ', or something the parser needs to handle?:\n%r' % (file_sig, fields))
+            record_type_pos = False
+            break
+
     with open(file_path, 'r') as f:
         last_fi = 0
         last_rtime = 0
@@ -23,7 +40,11 @@ def iterate_fixed_fields(file_path, fields, full_only=True):
             line = line.rstrip('\n')
             ld = OrderedDict()
             offset = 0
-            if set(fields.keys()) == {''}:
+            if record_type_pos:
+                record_type = line[record_type_pos[0]:record_type_pos[1]]
+                field_names = [f[0] for f in fields[record_type]]
+                field_lens = [f[1] for f in fields[record_type]]
+            elif set(fields.keys()) == {''}:
                 field_names = [f[0] for f in fields['']]
                 field_lens = [f[1] for f in fields['']]
                 if (line[0] in UPDATE_MARKER_vals and

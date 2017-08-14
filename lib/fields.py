@@ -5,6 +5,16 @@ from .fixed_fields import iterate_fixed_fields
 
 
 def iterate_fields(file_path, fields, full_only=True):
+    for r in _iterate_fields(file_path, fields, full_only):
+        if full_only and 'UPDATE_MARKER' in r:
+            if r['UPDATE_MARKER'] != 'R':
+                raise Exception('%s Expected full file, not'
+                                'changes Line "%s"' % (file_sig, ''.join(r.values())))
+            del r['UPDATE_MARKER']
+        yield r
+
+
+def _iterate_fields(file_path, fields, full_only=True):
     log = logging.getLogger('iterate_fields')
     file_sig = '/'.join(file_path.split('/')[-2:])
     if not fields or not sum(fields.values(), []):

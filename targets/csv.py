@@ -93,7 +93,7 @@ def file_to_csv(fprefix, filename, file_path=None, file_fields=None):
                                         fprefix + '-' + filename + fsuffix + '.csv')
                 csv_files[k] = open(csv_path, 'w')
                 fieldnames = [f[0] if not isinstance(f, str) else f for f in fields[k]]
-                fieldnames = [f for f in fieldnames if f != 'RECORD_TYPE']
+                fieldnames = [f for f in fieldnames if f not in ['RECORD_TYPE', 'UPDATE_MARKER']]
                 csv_writers[k] = csv_module.DictWriter(csv_files[k], fieldnames=fieldnames)
                 csv_writers[k].writeheader()
             if k:
