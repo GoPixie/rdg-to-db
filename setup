@@ -6,7 +6,7 @@ from collections import OrderedDict
 
 if __name__ == '__main__':
     print('Enter your login credentials for data.atoc.org')
-    print('(These will be stored locally in local.cfg)')
+    print('(These will be stored locally in accounts.cfg)')
     existing = read_config()
     config = configparser.ConfigParser()
     for site in ['dtdportal.atocrsp.org', 'data.atoc.org']:
@@ -19,12 +19,12 @@ if __name__ == '__main__':
         else:
             username = input('%s username: ' % (site))
         if existing and SITE_CRED in existing and existing[SITE_CRED]['password']:
-            # plaintext input as it will be stored as plaintext in local.cfg:
+            # plaintext input as it will be stored as plaintext in accounts.cfg:
             password = input('%s password (leave empty to keep existing): ' % (site))
             if not password.strip():
                 password = existing[SITE_CRED]['password']
         else:
             password = input('%s password: ' % (site))
         config[SITE_CRED] = OrderedDict([('username', username), ('password', password)])
-    with open('local.cfg', 'w') as configfile:
+    with open('accounts.cfg', 'w') as configfile:
         config.write(configfile)

@@ -9,35 +9,34 @@ from time import time as t_time
 from lib.util import json_comment_filter
 from lib.fields import iterate_fields
 from targets.unzip import unzip
+from lib.config import get_download_dir, get_unzip_dir, get_csv_dir
 
 
 def csv(file_prefixes=None):
     """
-    Transform each file in downloaded ZIP to csv format under /feeds/csv/
-    files with multiple record types are output to multiple csv files
+    Transform each file in downloaded ZIP to csv format under a /csv/
+    directory specified in local.cfg.
+    Files with multiple record types are output to multiple csv files
     e.g. /RJFAF123.TOC becomes
-        /feeds/csv/RJFA-TOC-T.CSV (main train operating company ids and names)
-        /feeds/csv/RJFA-TOC-F.CSV (additional toc fare ids)
+        /csv/RJFA-TOC-T.CSV (main train operating company ids and names)
+        /csv/RJFA-TOC-F.CSV (additional toc fare ids)
     """
     log = logging.getLogger('targets_csv')
     stime = t_time()
-    csv_dir = os.path.join(os.getcwd(), 'feeds', 'csv')
-    if not os.path.exists(csv_dir):
-        os.makedirs(csv_dir)
     file_fields = json_comment_filter(json.load(open('file-fields.json', 'r')))
     if not file_prefixes:
         file_prefixes = file_fields.keys()
 
     todo = []
     for fprefix in sorted(file_prefixes):
-        extracted_dir = os.path.join(os.getcwd(), 'feeds', fprefix)
-        if not os.path.isdir(extracted_dir):
-            zipfile_path = os.path.join(os.getcwd(), 'feeds', fprefix + '-FULL-LATEST.ZIP')
+        unzip_dir = os.path.join(get_unzip_dir(), fprefix)
+        if not os.path.isdir(unzip_dir):
+            zipfile_path = os.path.join(get_download_dir(), fprefix + '-FULL-LATEST.ZIP')
             if not os.path.exists(zipfile_path):
                 log.error('%s: No downloaded ZIP file found' % (fprefix))
                 continue
             unzip([fprefix])
-        existing = os.listdir(extracted_dir)
+        existing = os.listdir(unzip_dir)
         for filename in sorted(existing):
             if filename in ['DAT', '.version']:
                 continue
@@ -45,7 +44,7 @@ def csv(file_prefixes=None):
                 log.warning('%s: Missing spec for %s' % (fprefix, filename))
                 continue
             log.debug('%s: Found spec for %s' % (fprefix, filename))
-            file_path = os.path.join(extracted_dir, filename)
+            file_path = os.path.join(unzip_dir, filename)
             if False:
                 # don't multiprocess
                 file_to_csv(fprefix, filename, file_path, file_fields)
@@ -76,7 +75,7 @@ def file_to_csv(fprefix, filename, file_path=None, file_fields=None):
     CSV files for each one
     """
     if file_path is None:
-        file_path = os.path.join(os.getcwd(), 'feeds', fprefix, filename)
+        file_path = os.path.join(get_download_dir(), fprefix, filename)
     if file_fields is None:
         file_fields = json_comment_filter(json.load(open('file-fields.json', 'r')))
     csv_files = {}
@@ -89,7 +88,7 @@ def file_to_csv(fprefix, filename, file_path=None, file_fields=None):
                 fsuffix = ''
                 if k != '':
                     fsuffix = '-' + k
-                csv_path = os.path.join(os.getcwd(), 'feeds', 'csv',
+                csv_path = os.path.join(get_csv_dir(),
                                         fprefix + '-' + filename + fsuffix + '.csv')
                 csv_files[k] = open(csv_path, 'w')
                 fieldnames = [f[0] if not isinstance(f, str) else f for f in fields[k]]

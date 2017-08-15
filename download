@@ -9,12 +9,12 @@ import logging
 from colorlog import ColoredFormatter
 import json
 
-from lib.config import get_rdg_credentials
+from lib.config import get_download_dir, get_rdg_credentials
 from lib.util import json_comment_filter
 
 parser = argparse.ArgumentParser(
     description="Download Timetables, Fares & Routeing zip files from"
-    "https://dtdportal.atocrsp.org/ to a 'feeds' subfolder.",
+    "https://dtdportal.atocrsp.org/ to a 'feeds' directory specified in local.cfg.",
     epilog='Tip: Run ./setup to store username and password locally for reuse')
 
 arg = parser.add_argument
@@ -164,10 +164,7 @@ def download_data_dot_atoc_feeds(username, password=False, force=False):
 def download_url(br, url, force=False):
     log = logging.getLogger('download_url')
     fname = url.split('?')[0].split('/')[-1]
-    feeds_dir = os.path.join(os.getcwd(), 'feeds')
-    if not os.path.exists(feeds_dir):
-        os.makedirs(feeds_dir)
-    zip_path = os.path.join(feeds_dir, fname)
+    zip_path = os.path.join(get_download_dir(), fname)
     is_versioned = re.search('[0-9][0-9][0-9]', fname)
     if not force and is_versioned and fname and os.path.exists(zip_path):
         log.info('Found existing local file: %s' % (zip_path))
@@ -177,7 +174,7 @@ def download_url(br, url, force=False):
             zf.write(response.content)
             log.info('Downloaded to %s' % (zip_path))
     if fname[4] != 'C' and fname[:4] in file_fields.keys():
-        latest_path = os.path.join(os.getcwd(), 'feeds', fname[:4]+'-FULL-LATEST.ZIP')
+        latest_path = os.path.join(get_download_dir(), fname[:4]+'-FULL-LATEST.ZIP')
         if os.path.exists(latest_path):
             os.unlink(latest_path)
         os.link(zip_path, latest_path)

@@ -8,6 +8,7 @@ from multiprocessing import Pool
 from time import time as t_time
 
 from lib.util import json_comment_filter
+from lib.config import get_download_dir
 
 
 def unzip(file_prefixes=None):
@@ -26,7 +27,7 @@ def unzip(file_prefixes=None):
             ftname = ftname[:-4]
         else:
             zipfilename = ftname + '-FULL-LATEST.ZIP'
-        zpath = os.path.join(os.getcwd(), 'feeds', zipfilename)
+        zpath = os.path.join(get_download_dir(), zipfilename)
         if False:
             # don't multiprocess
             unzip_single(zpath, ftname)
@@ -47,7 +48,7 @@ def unzip_single_tup(tup):
 def unzip_single(zpath, ftname):
     log = logging.getLogger('targets_unzip')
     zz = ZipFile(open(zpath, 'rb'))
-    feed_path = os.path.join(os.getcwd(), 'feeds', ftname)
+    feed_path = os.path.join(get_download_dir(), ftname)
     if not os.path.exists(feed_path):
         os.makedirs(feed_path)
     versions = defaultdict(int)
