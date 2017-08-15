@@ -28,7 +28,7 @@ def postgresql(file_prefixes=None):
     stime = t_time()
     dburi = get_dburi()
     engine = create_engine(dburi)
-    connection = engine.connect()  # trigger conn. related exceptions, e.g. if db doesn't exist
+    engine.connect()  # trigger conn. related exceptions, e.g. if db doesn't exist
     metadata = MetaData()
 
     file_fields = json_comment_filter(json.load(open('file-fields.json', 'r')))
@@ -42,7 +42,7 @@ def postgresql(file_prefixes=None):
                     log.warning('%s: Missing spec for %s %s' % (fprefix, filename, record_type))
                     continue
                 if False:
-                    csv_to_table(engine, connection, metadata,
+                    csv_to_table(engine, metadata,
                                  fprefix, filename, record_type, fields)
                 else:
                     todo.append((fprefix, filename, record_type, fields))
@@ -61,20 +61,20 @@ def postgresql(file_prefixes=None):
 def csv_to_table_tup(tup):
     # required as we don't have pool.starmap_unordered
     dburi = get_dburi()
-    engine = create_engine(dburi)
-    connection = engine.connect()  # trigger conn. related exceptions, e.g. if db doesn't exist
+    engine = create_engine(dburi)  # each process needs it's own engine
     metadata = MetaData()
-    tup_with_cx = (engine, connection, metadata) + tup
+    tup_with_cx = (engine, metadata) + tup
     return csv_to_table(*tup_with_cx)
 
 
 def csv_to_table(
-        engine, connection, metadata,
+        engine, metadata,
         fprefix, filename, record_type, fields,
         csv_path=None):
     """
     WARNING: this drops and recreates tables (as specified in file-fields.json)
     """
+    connection = engine.connect()
     log = logging.getLogger('targets_postgresql_csv_to_table')
     if csv_path is None:
         csv_path = os.path.join(get_remote_csv_dir(),
