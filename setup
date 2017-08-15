@@ -3,6 +3,8 @@
 import configparser
 from lib.config import read_config, CRED
 from collections import OrderedDict
+import os
+import shutil
 
 if __name__ == '__main__':
     print('Enter your login credentials for data.atoc.org')
@@ -28,3 +30,7 @@ if __name__ == '__main__':
         config[SITE_CRED] = OrderedDict([('username', username), ('password', password)])
     with open('accounts.cfg', 'w') as configfile:
         config.write(configfile)
+
+    if not os.path.exists('local.cfg'):
+        shutil.copyfile('local.cfg.template', 'local.cfg')
+    print('✓ Credentials stored in accounts.cfg. Directory and database config can be edited in local.cfg')
