@@ -20,7 +20,7 @@ arg(
     choices=targets.__all__,
     help='How to transform the feeds (see below)')
 arg(
-    '-s', '--source', metavar='TARGET', default='all',
+    '-s', '--source', metavar='SRC_FEED', default='all',
     help='Which feed type to transform (RJFA, RJTT or RJRG). Default is all.')
 arg(
     '-v',
