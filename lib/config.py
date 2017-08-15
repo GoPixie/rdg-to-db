@@ -55,6 +55,37 @@ def get_csv_dir():
     return csv_dir
 
 
+def get_remote_csv_dir():
+    """
+    If csv files have been uploaded to a remote server
+    with postgresql
+    """
+    config = configparser.SafeConfigParser()
+    config.read('local.cfg')
+    if 'CSV' in config:
+        if 'remote_csv_directory' in config['CSV']:
+            csv_dir = config['CSV']['remote_csv_directory']
+        else:
+            csv_dir = config['CSV']['csv_directory']
+    else:
+        csv_dir = os.path.join(os.getcwd(), 'feeds', 'csv')
+    return csv_dir
+
+
+def get_dburi():
+    log = logging.getLogger('get_dburi')
+    config = configparser.SafeConfigParser()
+    config.read('local.cfg')
+    if 'Database' in config and 'dburi' in config['Database']:
+        dburi = config['Database']['dburi']
+    else:
+        log.info('No database connection string found in local.cfg')
+        dburi = input('DB Connection String (default postgresql://postgres@localhost:5432/rdg): ')
+        if not dburi.strip():
+            dburi = 'postgresql://postgres@localhost:5432/rdg'
+    return dburi
+
+
 def get_rdg_credentials(args, site):
     log = logging.getLogger('download')
     r = {}

@@ -8,3 +8,6 @@ unzip_directory = ./feeds/
 [CSV]
 # no subfolders created here
 csv_directory = ./csv/
+
+[Database]
+dburi = postgresql://postgres@localhost:5432/rdg

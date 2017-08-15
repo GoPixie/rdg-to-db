@@ -33,4 +33,5 @@ if __name__ == '__main__':
 
     if not os.path.exists('local.cfg'):
         shutil.copyfile('local.cfg.template', 'local.cfg')
-    print('✓ Credentials stored in accounts.cfg. Directory and database config can be edited in local.cfg')
+    print('✓ Credentials stored in accounts.cfg. '
+          'Directory and database config can be edited in local.cfg')
