@@ -6,6 +6,7 @@ import logging
 import json
 import os
 from time import time as t_time
+from multiprocessing import Pool
 
 from lib.util import json_comment_filter
 from lib.config import get_dburi, get_remote_csv_dir
@@ -33,14 +34,37 @@ def postgresql(file_prefixes=None):
     file_fields = json_comment_filter(json.load(open('file-fields.json', 'r')))
     if not file_prefixes:
         file_prefixes = file_fields.keys()
+    todo = []
     for fprefix in sorted(file_prefixes):
         for filename in file_fields[fprefix]:
             for record_type, fields in file_fields[fprefix][filename].items():
                 if not fields:
                     log.warning('%s: Missing spec for %s %s' % (fprefix, filename, record_type))
                     continue
-                csv_to_table(engine, connection, metadata, fprefix, filename, record_type, fields)
+                if False:
+                    csv_to_table(engine, connection, metadata, fprefix, filename, record_type, fields)
+                else:
+                    todo.append((fprefix, filename, record_type, fields))
+    if todo:
+        n = 1
+        with Pool() as pool:
+            for table_name, creating in pool.imap_unordered(csv_to_table_tup, todo):
+                if creating:
+                    log.info('Finished recreating %s (%d of %d)' % (table_name, n, len(todo)))
+                else:
+                    log.info('Finished creating %s (%d of %d)' % (table_name, n, len(todo)))
+                n += 1
     log.debug('csv to postgresql: %ds total time' % (t_time()-stime))
+
+
+def csv_to_table_tup(tup):
+    # required as we don't have pool.starmap_unordered
+    dburi = get_dburi()
+    engine = create_engine(dburi)
+    connection = engine.connect()  # trigger conn. related exceptions, e.g. if db doesn't exist
+    metadata = MetaData()
+    tup_with_cx = (engine, connection, metadata) + tup
+    return csv_to_table(*tup_with_cx)
 
 
 def csv_to_table(
@@ -77,10 +101,7 @@ def csv_to_table(
         columns.append(Column(column_name.lower(), type_))
     table = Table(table_name, metadata, *columns)
 
-    if table_name in inspector.get_table_names():
-        log.info('Recreating %s' % table_name)
-    else:
-        log.info('Creating %s' % table_name)
+    creating = table_name in inspector.get_table_names()
 
     trans = connection.begin()
     try:
@@ -100,3 +121,5 @@ WITH (FORMAT CSV, HEADER);
             log.warning('%s not found, no table created' % (csv_path))
         else:
             raise
+
+    return table_name, creating
