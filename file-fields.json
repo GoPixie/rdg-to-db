@@ -155,16 +155,16 @@
         },
         "RGK": {  "//": "Route Details and Route Data",
             "//": "London Route:",
-            "L": ["ROUTE_CODE", "RECORD_TYPE", "LONDON_MARKER"],
+            "L": [["ROUTE_CODE", 5], ["RECORD_TYPE", 1], ["LONDON_MARKER", 1]],
             "//": "Route Data:",
-            "D": ["ROUTE_CODE", "RECORD_TYPE", "ENTRY_TYPE", "CRS_CODE", "GROUP_MKR", "MODE_CODE", "TOC_ID"]
+            "D": [["ROUTE_CODE", 5], ["RECORD_TYPE", 1], ["ENTRY_TYPE", 1], ["CRS_CODE", 3], ["GROUP_MKR", 1], ["MODE_CODE", 3], ["TOC_ID", 2]]
         },
         "RGC": {  "//": "London Stations"
         },
         "RGX": {  "//": "New Stations"
         },
         "RGY": {  "//": "Locations",
-            "": ["UIC_CODE", "NLC_CODE", "GROUP_CODE", "CRS_CODE", "COUNTY_CODE", "ZONE_CODE", "START_DATE", "END_DATE"]
+            "": [["UIC_CODE", 3], ["NLC_CODE", 4], ["GROUP_CODE", 4], ["CRS_CODE", 3], ["COUNTY_CODE", 2], ["ZONE_CODE", 4], ["START_DATE", 8], ["END_DATE", 8]]
         },
         "RGV": {  "//": "Zonal routes"
         },

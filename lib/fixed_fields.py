@@ -5,6 +5,8 @@ import logging
 
 UPDATE_MARKER_vals = 'RIAD'
 
+class NotFixedFieldsException(Exception):
+    pass
 
 def field_sum(field_pairs):
     return sum(f[1] for f in field_pairs)
@@ -29,7 +31,7 @@ def iterate_fixed_fields(file_path, fields, full_only=True):
                             ', or something the parser needs to handle?:\n%r' % (file_sig, fields))
             record_type_pos = False
             break
-
+    csv_like = None  # undetermined
     with open(file_path, 'r') as f:
         last_fi = 0
         last_rtime = 0
@@ -38,6 +40,9 @@ def iterate_fixed_fields(file_path, fields, full_only=True):
             if line.startswith('/'):
                 continue
             line = line.rstrip('\n')
+            if csv_like is None and ',' in line:
+                raise NotFixedFieldsException()
+            csv_like = False
             ld = OrderedDict()
             offset = 0
             if record_type_pos:

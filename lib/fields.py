@@ -1,7 +1,7 @@
 
 import logging
 
-from .fixed_fields import iterate_fixed_fields
+from .fixed_fields import iterate_fixed_fields, NotFixedFieldsException
 
 
 def iterate_fields(file_path, fields, convert_dates=True, full_only=True):
@@ -31,14 +31,21 @@ def _iterate_fields(file_path, fields, full_only=True):
     log.debug('ingesting %s' % (file_sig))
 
     # sniff definition to see if it looks like a fixed definition
-    # e.g. [["CLUSTER_ID", 4], ["CLUSTER_NLC", 4], ...]
-    random_val = next(iter(fields.values()))
-    if not isinstance(random_val[0], str) and len(random_val[0]) == 2:
-        for r in iterate_fixed_fields(file_path, fields, full_only):
-            yield r
-        return
 
+    random_val = next(iter(fields.values()))
     RECORD_TYPE_positions = None
+    if not isinstance(random_val[0], str) and len(random_val[0]) == 2:
+        try:
+            # Old convention was that presence of char length indicated fixed width:
+            # [["CLUSTER_ID", 4], ["CLUSTER_NLC", 4], ...]
+            for r in iterate_fixed_fields(file_path, fields, full_only):
+                yield r
+            return
+        except NotFixedFieldsException:
+            # However, CSV style files now also include field width for specifying db col size
+            pass
+        # Throw away field width info for the purposes of the rest of the import:
+        fields = dict([(k, [f[0] for f in fv]) for k, fv in fields.items()])
     if fields.keys() == {''}:
         field_names = list(fields.values())[0]
     else:
