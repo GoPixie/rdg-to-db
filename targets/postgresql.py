@@ -42,7 +42,8 @@ def postgresql(file_prefixes=None):
                     log.warning('%s: Missing spec for %s %s' % (fprefix, filename, record_type))
                     continue
                 if False:
-                    csv_to_table(engine, connection, metadata, fprefix, filename, record_type, fields)
+                    csv_to_table(engine, connection, metadata,
+                                 fprefix, filename, record_type, fields)
                 else:
                     todo.append((fprefix, filename, record_type, fields))
     if todo:
