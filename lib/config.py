@@ -13,6 +13,19 @@ def read_config():
     return config
 
 
+def _multiprocess_makedirs(dir_path, log, dir_type):
+    if not os.path.exists(dir_path):
+        try:
+            os.makedirs(dir_path)
+        except IOError:
+            if os.path.exists(dir_path):
+                pass  # might have just been created by another process
+            else:
+                raise
+        else:
+            log.info('Creating %s %s directory for first time' % (dir_path, dir_type))
+
+
 def get_download_dir():
     log = logging.getLogger('get_download_dir')
     config = configparser.SafeConfigParser()
@@ -21,9 +34,7 @@ def get_download_dir():
         download_dir = config['Download']['download_directory']
     else:
         download_dir = os.path.join(os.getcwd(), 'feeds')
-    if not os.path.exists(download_dir):
-        log.info('Creating %s download directory for first time' % (download_dir))
-        os.makedirs(download_dir)
+    _multiprocess_makedirs(download_dir, log, 'download')
     return download_dir
 
 
@@ -35,9 +46,7 @@ def get_unzip_dir():
         unzip_dir = config['Unzip']['unzip_directory']
     else:
         unzip_dir = os.path.join(os.getcwd(), 'feeds')
-    if not os.path.exists(unzip_dir):
-        log.info('Creating %s unzip directory for first time' % (unzip_dir))
-        os.makedirs(unzip_dir)
+    _multiprocess_makedirs(unzip_dir, log, 'unzip')
     return unzip_dir
 
 
@@ -49,9 +58,7 @@ def get_csv_dir():
         csv_dir = config['CSV']['csv_directory']
     else:
         csv_dir = os.path.join(os.getcwd(), 'feeds', 'csv')
-    if not os.path.exists(csv_dir):
-        log.info('Creating %s csv directory for first time' % (csv_dir))
-        os.makedirs(csv_dir)
+    _multiprocess_makedirs(csv_dir, log, 'csv')
     return csv_dir
 
 
