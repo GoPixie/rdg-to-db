@@ -39,7 +39,7 @@ def _iterate_fields(file_path, fields, full_only=True):
         return
 
     RECORD_TYPE_positions = None
-    if len(fields) == 1 and list(fields.keys())[0] == '':
+    if fields.keys() == {''}:
         field_names = list(fields.values())[0]
     else:
         RECORD_TYPE_positions = set(fv.index('RECORD_TYPE') for fv in fields.values())
