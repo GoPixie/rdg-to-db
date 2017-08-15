@@ -42,8 +42,12 @@ def postgresql(file_prefixes=None):
                     log.warning('%s: Missing spec for %s %s' % (fprefix, filename, record_type))
                     continue
                 if False:
-                    csv_to_table(engine, metadata,
-                                 fprefix, filename, record_type, fields)
+                    table_name, creating = csv_to_table(engine, metadata,
+                                                        fprefix, filename, record_type, fields)
+                    if creating:
+                        log.info('Finished recreating %s' % (table_name))
+                    else:
+                        log.info('Finished creating %s' % (table_name))
                 else:
                     todo.append((fprefix, filename, record_type, fields))
     if todo:

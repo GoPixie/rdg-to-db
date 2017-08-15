@@ -47,7 +47,10 @@ def csv(file_prefixes=None):
             file_path = os.path.join(unzip_dir, filename)
             if False:
                 # don't multiprocess
-                file_to_csv(fprefix, filename, file_path, file_fields)
+                _, _, csv_count = file_to_csv(fprefix, filename, file_path, file_fields)
+                if csv_count:
+                    log.info('Finished processing %s/%s %s csv file(s)' % (
+                        fprefix, filename, csv_count))
             else:
                 todo.append((fprefix, filename, file_path, file_fields))
     if todo:
