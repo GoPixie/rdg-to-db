@@ -7,6 +7,7 @@ import json
 import os
 from time import time as t_time
 from multiprocessing import Pool
+import re
 
 from lib.util import json_comment_filter
 from lib.config import get_dburi, get_remote_csv_dir
@@ -35,6 +36,7 @@ def postgresql(file_prefixes=None):
     if not file_prefixes:
         file_prefixes = file_fields.keys()
     todo = []
+    drop_views(engine)
     for fprefix in sorted(file_prefixes):
         for filename in file_fields[fprefix]:
             for record_type, fields in file_fields[fprefix][filename].items():
@@ -59,6 +61,7 @@ def postgresql(file_prefixes=None):
                 else:
                     log.info('Finished creating %s (%d of %d)' % (table_name, n, len(todo)))
                 n += 1
+    create_views(engine)
     log.debug('csv to postgresql: %ds total time' % (t_time()-stime))
 
 
@@ -128,3 +131,57 @@ WITH (FORMAT CSV, HEADER);
             raise
 
     return table_name, creating
+
+
+VIEWS = [
+    ('rjfa_rte_l_agg', """
+    SELECT route_code, end_date,
+    array_aggx(CASE WHEN incl_excl = 'I' THEN rjfa_rte_l.crs_code ELSE null END) AS crs_inclusions,
+    array_aggx(CASE WHEN incl_excl = 'E' THEN rjfa_rte_l.crs_code ELSE null END) AS crs_exclusions,
+    array_aggx(CASE WHEN incl_excl = 'I' THEN rjfa_rte_l.nlc_code ELSE null END) AS nls_inclusions,
+    array_aggx(CASE WHEN incl_excl = 'E' THEN rjfa_rte_l.crs_code ELSE null END) AS nlc_exclusions
+    FROM rjfa_rte_l
+    GROUP BY route_code, end_date"""),
+
+    ('rjrg_rgk_d_agg', """
+    SELECT route_code,
+    array_aggx(CASE WHEN entry_type = 'A' THEN rjrg_rgk_d.crs_code ELSE null END) AS rgk_crs_inclusions,
+    array_aggx(CASE WHEN entry_type = 'I' THEN rjrg_rgk_d.crs_code ELSE null END) AS rgk_crs_anys,
+    array_aggx(CASE WHEN entry_type = 'E' THEN rjrg_rgk_d.crs_code ELSE null END) AS rgk_crs_exclusions,
+    array_aggx(CASE WHEN entry_type = 'T' THEN rjrg_rgk_d.toc_id ELSE null END) AS toc_inclusions,
+    array_aggx(CASE WHEN entry_type = 'X' THEN rjrg_rgk_d.toc_id ELSE null END) AS toc_exclusions,
+    array_aggx(CASE WHEN entry_type = 'L' THEN rjrg_rgk_d.mode_code ELSE null END) AS mode_inclusions,
+    array_aggx(CASE WHEN entry_type = 'N' THEN rjrg_rgk_d.mode_code ELSE null END) AS mode_exclusions
+    FROM rjrg_rgk_d
+    GROUP BY route_code"""),
+
+    ('route_code', """
+    SELECT route_code, daterange(start_date, end_date+1) AS date_range, quote_date, description,
+    concat(atb_desc_1, atb_desc_2, atb_desc_3, atb_desc_4) AS atb_desc,
+    crs_inclusions, crs_exclusions, rgk_crs_inclusions, rgk_crs_anys, rgk_crs_exclusions, rjrg_rgk_l.london_marker,
+    toc_inclusions, toc_exclusions, mode_inclusions, mode_exclusions
+    FROM rjfa_rte_r
+    LEFT JOIN rjfa_rte_l_agg USING (route_code, end_date)
+    LEFT JOIN rjrg_rgk_l USING (route_code)
+    LEFT JOIN rjrg_rgk_d_agg USING (route_code)
+    """),
+]
+
+
+def drop_views(engine):
+    log = logging.getLogger('targets_postgresql_drop_views')
+    log.info('Dropping %d views' % (len(VIEWS)))
+    connection = engine.connect()
+    for view_name, _ in reversed(VIEWS):
+        connection.execute('DROP VIEW IF EXISTS %s;' % (view_name))
+
+
+def create_views(engine):
+    log = logging.getLogger('targets_postgresql_drop_views')
+    connection = engine.connect()
+    for view_name, view_select in VIEWS:
+        # Some magic to remove boilerplate from above view definitions
+        # could also define array_aggx as a database function (want to also remove nulls)
+        view_select = re.sub('array_aggx\((.*?)\) AS ', r'array_remove(array_agg(\1), null) AS ', view_select)
+        log.info('Creating %s view' % (view_name))
+        connection.execute('CREATE OR REPLACE VIEW %s AS %s;' % (view_name, view_select))
