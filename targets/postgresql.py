@@ -114,10 +114,10 @@ def csv_to_table(
     trans = connection.begin()
     try:
         table.drop(
-            engine,
+            connection,
             checkfirst=True,  # don't issue a DROP if no table exists
         )
-        table.create(engine)
+        table.create(connection)
         connection.execute("""COPY "%s"
 FROM '%s'
 WITH (FORMAT CSV, HEADER);
