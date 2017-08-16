@@ -61,13 +61,20 @@ to convert files from fixed width format to CSV format and save them in the ./fe
 
 Conversion is based on definitions found in the [`file-fields.json`](file-fields.json) file which is in turn transcribed from definitions found in RDG documents [SP0035](https://www.raildeliverygroup.com/our-services/rail-data/fares-data.html) (fares), [RSPS5046](https://www.raildeliverygroup.com/our-services/rail-data/timetable-data.html) (timetables) & [RSPS5047](https://www.raildeliverygroup.com/our-services/rail-data/routeing-guide-data.html) (routeing guide).
 
+run
+```
+./transform --target=postgresql
+```
+to transfer CSV files to a PostgreSQL database and create some useful views.
+
+Tables are created with primary keys taken from [`field-pks.json`](field-pks.json) and are populated directly from CSV files using the fast postgresql COPY command.  Views built on top of the raw table make use of PostgreSQL [daterange](https://www.postgresql.org/docs/9.2/static/rangetypes.html) for start_date/end_date pairs, and denormalize data from adjunct table into sql arrays. See [`model.py`](model.py) for an example of how the route_code view can be accessed through Python/[SqlAlchemy](http://www.sqlalchemy.org/).
+
 
 ## TODO
 
  - Partial 'update only' files
  - Set of minimal test ZIP files containing records for each record type
  - mysql backend for ([open-track schema](https://github.com/open-track/dtd2mysql))
- - postgresql backend using [daterange](https://www.postgresql.org/docs/9.2/static/rangetypes.html) and denormalizing output
  - database functions or views which [calculate UK Fares](https://github.com/open-track/fares-service-php/wiki/Fare-Lookup) for a given origin/destination pair!
 
 ## Contributing
