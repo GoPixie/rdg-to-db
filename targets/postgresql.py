@@ -66,9 +66,9 @@ def postgresql(file_prefixes=None):
                 if False:
                     table_name, creating = csv_to_table(engine, metadata,
                                                         fprefix, filename, record_type, fields, pks)
-                    if creating:
+                    if table_name and creating:
                         log.info('Finished recreating %s' % (table_name))
-                    else:
+                    elif table_name:
                         log.info('Finished creating %s' % (table_name))
                 else:
                     todo.append((fprefix, filename, record_type, fields, pks))
@@ -76,9 +76,9 @@ def postgresql(file_prefixes=None):
         n = 1
         with Pool() as pool:
             for table_name, creating in pool.imap_unordered(csv_to_table_tup, todo):
-                if creating:
+                if table_name and creating:
                     log.info('Finished recreating %s (%d of %d)' % (table_name, n, len(todo)))
-                else:
+                elif table_name:
                     log.info('Finished creating %s (%d of %d)' % (table_name, n, len(todo)))
                 n += 1
     create_views(engine)
@@ -151,7 +151,11 @@ WITH (FORMAT CSV, HEADER%s);
     except OperationalError as oe:
         trans.rollback()
         if 'No such file or directory' in str(oe):
-            log.warning('%s not found, no table created' % (csv_path))
+            if creating:
+                log.warning('%s not found, no table created' % (csv_path))
+            else:
+                log.warning('%s not found, table kept as-is' % (csv_path))
+            table_name = None
         else:
             raise
 
