@@ -1,0 +1,178 @@
+{
+    "//": "Table Primary Keys (excluding UPDATE_MARKER and RECORD_TYPE)",
+
+    "RJFA": { "//": "Fares and Associated Data: https://www.raildeliverygroup.com/our-services/rail-data/fares-data.html & http://data.atoc.org/fares-data",
+        "FFL": { "//": "Flow",
+            "F": ["ORIGIN_CODE", "DESTINATION_CODE", "ROUTE_CODE", "STATUS_CODE", "USAGE_CODE", "DIRECTION", "END_DATE"],
+            "T": ["FLOW_ID", "TICKET_CODE"]
+        },
+        "FSC": { "//": "Station Cluster",
+            "": ["CLUSTER_ID", "CLUSTER_NLC", "END_DATE"]
+        },
+        "NDF": { "//": "Non derivable fares",
+            "": ["ORIGIN_CODE", "DESTINATION_CODE", "ROUTE_CODE", "RAILCARD_CODE", "TICKET_CODE", "ND_RECORD_TYPE", "END_DATE"]
+        },
+        "NFO": { "//": "Non derivable fares overrides",
+            "": ["ORIGIN_CODE", "DESTINATION_CODE", "ROUTE_CODE", "RAILCARD_CODE", "TICKET_CODE", "ND_RECORD_TYPE", "END_DATE"]
+        },
+        "FNS": { "//": "Non standard discounts",
+            "": ["ORIGIN_CODE", "DESTINATION_CODE", "ROUTE_CODE", "RAILCARD_CODE", "TICKET_CODE", "END_DATE"]
+        },
+        "TTY": { "//": "Ticket types",
+            "": ["TICKET_CODE", "END_DATE"]
+        },
+        "TVL": { "//": "Ticket validity",
+            "": ["VALIDITY_CODE", "END_DATE"]
+        },
+        "TJS": { "//": "Journey segments",
+            "": ["JS_CODE", "END_DATE"]
+        },
+        "TPB": { "//": "Ticket publication data (todo)"},
+        "TPN": { "//": "Print formats (todo)", "P": [], "T": [] },
+        "TCL": { "//": "Class Legends (todo)" },
+        "TRR": { "//": "Rail Rovers (todo)" },
+        "TPK": { "//": "Packages",
+            "P": ["PACKAGE_CODE", "END_DATE"],
+            "S": ["PACKAGE_CODE", "END_DATE", "SUPPLEMENT_CODE"]
+        },
+        "SUP": { "//": "Supplements",
+            "R": ["RULE_NUMBER", "END_DATE"],
+            "//": "Rule applies:",
+            "A": ["RULE_NUMBER", "END_DATE", "IE_MARKER", "CONDITION_TYPE", "IE_CODE"],
+            "//": "Rule Supplement:",
+            "M": ["RULE_NUMBER", "END_DATE", "SUPPLEMENT_CODE"],
+            "//": "Supplement:",
+            "S": ["SUPPLEMENT_CODE", "END_DATE"],
+            "//": "Supplement Override:",
+            "O": ["SUPPLEMENT_CODE", "END_DATE", "OVERRIDDEN_SUPPLEMENT"]
+        },
+        "RLC": { "//": "Railcards",
+            "": ["RAILCARD_CODE", "END_DATE"]
+        },
+        "RCM": { "//": "Railcard Minimum Fares",
+            "": ["RAILCARD_CODE", "TICKET_CODE", "END_DATE"]
+        },
+        "DIS": { "//": "status discounts (standard discounts)",
+            "S": ["STATUS_CODE", "END_DATE"],
+            "D": ["STATUS_CODE", "END_DATE", "DISCOUNT_CATEGORY"]
+        },
+        "FRR": { "//": "Rounding rules",
+            "": ["RULE_NO", "END_DATE", "RULE_INDEX"]
+        },
+        "RST": { "//": "Restrictions",
+            "//": "Restriction dates:",
+            "RD": ["CF_MKR"],
+            "//": "Restriction header:",
+            "RH": ["CF_MKR", "RESTRICTION_CODE"],
+            "//": "Restriction header date bands:",
+            "HD": ["CF_MKR", "RESTRICTION_CODE", "DATE_FROM", "DATE_TO"],
+            "//": "Restriction header route locations:",
+            "HL": ["CF_MKR", "RESTRICTION_CODE", "LOCATION_CRS_CODE"],
+            "//": "Restriction header allowed changes:",
+            "HC": ["CF_MKR", "RESTRICTION_CODE", "ALLOWED_CHANGE"],
+            "//": "Restriction header additional restriction:",
+            "HA": ["CF_MKR", "RESTRICTION_CODE", "ADDITIONAL_RESTRICTION", "ORIGIN", "DESTINATION"],
+            "//": "Time restriction:",
+            "TR": ["CF_MKR", "RESTRICTION_CODE", "SEQUENCE_NO", "OUT_RET"],
+            "//": "Time restriction date bands:",
+            "TD": ["CF_MKR", "RESTRICTION_CODE", "SEQUENCE_NO", "OUT_RET", "DATE_FROM", "DATE_TO"],
+            "//": "Time Restriction toc record:",
+            "TT": ["CF_MKR", "RESTRICTION_CODE", "SEQUENCE_NO", "OUT_RET", "TOC_CODE"],
+            "//": "Time Restriction privilege data:",
+            "TP": ["CF_MKR", "RESTRICTION_CODE", "SEQUENCE_NO", "OUT_RET", "BARRED_CLASS", "BARRED_TICKETS", "BARRED_SEASONS", "BARRED_FIRST", "FROM_LOCATION", "TO_LOCATION"],
+            "//": "Time Restriction privilege pass exceptions:",
+            "TE": ["CF_MKR", "RESTRICTION_CODE", "SEQUENCE_NO", "OUT_RET", "PASS_EXCEPTION"],
+            "//": "Train Restriction:",
+            "SR": ["CF_MKR", "RESTRICTION_CODE", "TRAIN_NO", "OUT_RET"],
+            "//": "Train Restriction Date Bands:",
+            "SD": ["CF_MKR", "RESTRICTION_CODE", "TRAIN_NO", "OUT_RET", "DATE_FROM", "DATE_TO"],
+            "//": "Train Restriction quota exemption:",
+            "SQ": ["CF_MKR", "RESTRICTION_CODE", "TRAIN_NO", "OUT_RET", "LOCATION", "QUOTA_IND", "ARR_DEP"],
+            "//": "Train Restriction privilege data:",
+            "SP": ["CF_MKR", "RESTRICTION_CODE", "TRAIN_NO", "OUT_RET", "BARRED_CLASS", "BARRED_TICKETS", "BARRED_SEASONS", "BARRED_FIRST"],
+            "//": "Train Restriction privilege pass exceptions:",
+            "SE": ["CF_MKR", "RESTRICTION_CODE", "TRAIN_NO", "OUT_RET", "PASS_EXCEPTION"],
+            "//": "Railcard Restriction:",
+            "RR": ["CF_MKR", "RAILCARD_CODE", "SEQUENCE_NO"],
+            "//": "Exception codes:",
+            "EC": ["CF_MKR", "EXCEPTION_CODE"],
+            "//": "Ticket Calendar:",
+            "CA": ["CF_MKR", "TICKET_CODE", "CAL_TYPE", "ROUTE_CODE", "COUNTRY_CODE", "DATE_FROM", "DATE_TO"]
+        },
+        "LOC": { "//": "Locations",
+            "L": ["UIC_CODE", "END_DATE"],
+            "//": "Associated Stations:",
+            "A": ["UIC_CODE", "END_DATE", "ASSOC_UIC_CODE"],
+            "//": "Railcard Geography:",
+            "R": ["UIC_CODE", "RAILCARD_CODE", "END_DATE"],
+            "//": "TT Group Location:",
+            "G": ["GROUP_UIC_CODE", "END_DATE"],
+            "//": "Group Members:",
+            "M": ["GROUP_UIC_CODE", "END_DATE", "MEMBER_UIC_CODE"],
+            "//": "Synonym:",
+            "S": ["UIC_CODE", "END_DATE", "START_DATE", "DESCRIPTION"]
+        },
+        "RTE": { "//": "Routes",
+            "R": ["ROUTE_CODE", "END_DATE"],
+            "//": "Route include/exclude locations record:",
+            "L": ["ROUTE_CODE", "END_DATE", "ADMIN_AREA", "NLC_CODE"]
+        },
+        "TOC": { "//": "TOC (Train Operating Companies)",
+            "T": ["TOC_ID"],
+            "F": ["FARE_TOC_ID", "TOC_ID"]
+        },
+        "TSP": { "//": "TOC Specific Tickets",
+            "": ["TICKET_CODE", "RESTRICTION_CODE", "RESTRICTION_FLAG", "DIRECTION", "TOC_ID", "TOC_TYPE", "END_DATE"]
+        },
+        "TAP": { "//": "Advance Purchase Tickets",
+            "": ["TICKET_CODE", "RESTRICTION_CODE", "RESTRICTION_FLAG", "TOC_ID", "END_DATE"]
+        }
+    },
+    "RJTT": { "//": "Timetable Information: https://www.raildeliverygroup.com/our-services/rail-data/timetable-data.html & http://data.atoc.org/how-to"
+    },
+    "RJRG": {  "//": "Routeing Guide Data: https://www.raildeliverygroup.com/our-services/rail-data/routeing-guide-data.html & http://data.atoc.org/routeing-guide",
+        "RGS": {  "//": "Station file"
+        },
+        "RGG": {  "//": "Station-Group file"
+        },
+        "RGP": {  "//": "Routeing point file"
+        },
+        "RGN": {  "//": "Node file"
+        },
+        "RGM": {  "//": "Map file"
+        },
+        "RGL": {  "//": "Link file"
+        },
+        "RGR": {  "//": "Permitted routes file"
+        },
+        "RGD": {  "//": "Station-Link file"
+        },
+        "RGE": {  "//": "Easement Text"
+        },
+        "RGF": {  "//": "Easement Definition"
+        },
+        "RGH": {  "//": "Easement TOC"
+        },
+        "RGK": {  "//": "Route Details and Route Data",
+            "//": "London Route:",
+            "L": ["ROUTE_CODE"],
+            "//": "Route Data:",
+            "D": ["ROUTE_CODE", "ENTRY_TYPE", "CRS_CODE", "GROUP_MKR"]
+        },
+        "RGC": {  "//": "London Stations"
+        },
+        "RGX": {  "//": "New Stations"
+        },
+        "RGY": {  "//": "Locations",
+            "": ["UIC_CODE", "NLC_CODE"]
+        },
+        "RGV": {  "//": "Zonal routes"
+        },
+        "RGB": {  "//": "Zonal fare locations"
+        },
+        "RGA": {  "//": "Zonal system locations"
+        },
+        "RGI": {  "//": "Download Index"
+        }
+    }
+}

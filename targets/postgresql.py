@@ -23,7 +23,8 @@ def postgresql(file_prefixes=None):
         Date: Applicable columns ending in '_DATE'
         Time: Applicable columns ending in '_TIME'
     The CSV files must be on the same server as the postgres
-    db and readable by the postgres process
+    db and readable by the postgres process.
+    Composite primary keys have blanks (rather than null) in columns.
     """
     log = logging.getLogger('targets_postgresql')
     stime = t_time()
@@ -33,6 +34,7 @@ def postgresql(file_prefixes=None):
     metadata = MetaData()
 
     file_fields = json_comment_filter(json.load(open('file-fields.json', 'r')))
+    field_pks = json_comment_filter(json.load(open('field-pks.json', 'r')))
     if not file_prefixes:
         file_prefixes = file_fields.keys()
     todo = []
@@ -40,18 +42,19 @@ def postgresql(file_prefixes=None):
     for fprefix in sorted(file_prefixes):
         for filename in file_fields[fprefix]:
             for record_type, fields in file_fields[fprefix][filename].items():
+                pks = field_pks.get(fprefix, {}).get(filename, {}).get(record_type, [])
                 if not fields:
                     log.warning('%s: Missing spec for %s %s' % (fprefix, filename, record_type))
                     continue
                 if False:
                     table_name, creating = csv_to_table(engine, metadata,
-                                                        fprefix, filename, record_type, fields)
+                                                        fprefix, filename, record_type, fields, pks)
                     if creating:
                         log.info('Finished recreating %s' % (table_name))
                     else:
                         log.info('Finished creating %s' % (table_name))
                 else:
-                    todo.append((fprefix, filename, record_type, fields))
+                    todo.append((fprefix, filename, record_type, fields, pks))
     if todo:
         n = 1
         with Pool() as pool:
@@ -76,7 +79,7 @@ def csv_to_table_tup(tup):
 
 def csv_to_table(
         engine, metadata,
-        fprefix, filename, record_type, fields,
+        fprefix, filename, record_type, fields, pks=[],
         csv_path=None):
     """
     WARNING: this drops and recreates tables (as specified in file-fields.json)
@@ -106,7 +109,7 @@ def csv_to_table(
             type_ = Text()
         else:
             type_ = String(column_size)
-        columns.append(Column(column_name.lower(), type_))
+        columns.append(Column(column_name.lower(), type_, primary_key=column_name in pks))
     table = Table(table_name, metadata, *columns)
 
     creating = table_name in inspector.get_table_names()
@@ -118,10 +121,15 @@ def csv_to_table(
             checkfirst=True,  # don't issue a DROP if no table exists
         )
         table.create(connection)
+
+        force_not_null = ''
+        if pks:
+            force_not_null = ', FORCE_NOT_NULL ("%s")' % ('", "'.join([p.lower() for p in pks]))
         connection.execute("""COPY "%s"
 FROM '%s'
-WITH (FORMAT CSV, HEADER);
-        """ % (table_name, csv_path))
+WITH (FORMAT CSV, HEADER%s);
+        """ % (table_name, csv_path, force_not_null))
+
         trans.commit()
     except OperationalError as oe:
         trans.rollback()
