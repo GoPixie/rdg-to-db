@@ -27,6 +27,7 @@ def csv(file_prefixes=None):
     if not file_prefixes:
         file_prefixes = file_fields.keys()
 
+    done = []
     todo = []
     for fprefix in sorted(file_prefixes):
         unzip_dir = os.path.join(get_unzip_dir(), fprefix)
@@ -43,23 +44,32 @@ def csv(file_prefixes=None):
             file_path = os.path.join(unzip_dir, filename)
             if False:
                 # don't multiprocess
-                _, _, csv_count = file_to_csv(fprefix, filename, file_path, file_fields)
-                if csv_count:
+                _, _, csv_files = file_to_csv(fprefix, filename, file_path, file_fields)
+                done.extend(csv_files)
+                if csv_files:
                     log.info('Finished processing %s/%s %s csv file(s)' % (
-                        fprefix, filename, csv_count))
+                        fprefix, filename, len(csv_files)))
             else:
                 todo.append((fprefix, filename, file_path, file_fields))
     if todo:
         n = 1
         with Pool() as pool:
-            for fprefix, filename, csv_count in pool.imap_unordered(file_to_csv_tup, todo):
+            for fprefix, filename, csv_files in pool.imap_unordered(file_to_csv_tup, todo):
                 csv_msg = ''
-                if csv_count > 1:
-                    csv_msg = '- %d csv files' % (csv_count)
-                if csv_count > 0:
+                if len(csv_files) > 1:
+                    csv_msg = '- %d csv files' % (len(csv_files))
+                if len(csv_files) > 0:
                     log.info('Finished processing %s/%s (%d of %d) %s' % (
                         fprefix, filename, n, len(todo), csv_msg))
                 n += 1
+                done.extend(csv_files)
+
+    # ensure we don't accidentally have out of date csv files hanging around:
+    csv_dir = get_csv_dir()
+    for fname in os.listdir(csv_dir):
+        if fname.endswith('.csv') and fname not in done and fname.split('-')[0] in file_prefixes:
+            shutil.move(os.path.join(csv_dir, fname), os.path.join(csv_dir, fname + '.old'))
+
     log.debug('csv: %ds total time' % (t_time()-stime))
 
 
@@ -87,12 +97,12 @@ def file_to_csv(fprefix, filename, file_path=None, file_fields=None):
                 fsuffix = ''
                 if k != '':
                     fsuffix = '-' + k
-                csv_path = os.path.join(get_csv_dir(),
-                                        fprefix + '-' + filename + fsuffix + '.csv')
-                csv_files[k] = open(csv_path, 'w')
+                csv_filename = fprefix + '-' + filename + fsuffix + '.csv'
+                csv_path = os.path.join(get_csv_dir(), csv_filename)
+                csv_files[csv_filename] = open(csv_path, 'w')
                 fieldnames = [f[0] if not isinstance(f, str) else f for f in fields[k]]
                 fieldnames = [f for f in fieldnames if f not in ['RECORD_TYPE', 'UPDATE_MARKER']]
-                csv_writers[k] = csv_module.DictWriter(csv_files[k], fieldnames=fieldnames)
+                csv_writers[k] = csv_module.DictWriter(csv_files[csv_filename], fieldnames=fieldnames)
                 csv_writers[k].writeheader()
             if k:
                 del record['RECORD_TYPE']  # contained in filename
@@ -100,4 +110,4 @@ def file_to_csv(fprefix, filename, file_path=None, file_fields=None):
     finally:
         for f in csv_files.values():
             f.close()
-    return fprefix, filename, len(csv_files)
+    return fprefix, filename, list(csv_files.keys())
