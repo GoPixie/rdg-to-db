@@ -157,7 +157,7 @@
             "//": "London Route:",
             "L": ["ROUTE_CODE"],
             "//": "Route Data:",
-            "D": ["ROUTE_CODE", "ENTRY_TYPE", "CRS_CODE", "GROUP_MKR"]
+            "D": ["invalid"]
         },
         "RGC": {  "//": "London Stations"
         },

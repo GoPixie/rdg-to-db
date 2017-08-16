@@ -123,7 +123,7 @@ def csv_to_table(
         table.create(connection)
 
         force_not_null = ''
-        if pks:
+        if pks and pks != ['invalid']:
             force_not_null = ', FORCE_NOT_NULL ("%s")' % ('", "'.join([p.lower() for p in pks]))
         connection.execute("""COPY "%s"
 FROM '%s'
