@@ -53,6 +53,15 @@ def get_csv_dir():
     return get_dir('CSV')
 
 
+def keep_old_downloads():
+    config = configparser.SafeConfigParser()
+    config.read('local.cfg')
+    if 'Download' in config:
+        return config['Download'].getboolean('keep_old', False)
+    else:
+        return False
+
+
 def get_remote_csv_dir():
     """
     If csv files have been uploaded to a remote server

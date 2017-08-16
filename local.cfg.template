@@ -1,5 +1,6 @@
 [Download]
 download_directory = ./feeds/
+keep_old = False
 
 [Unzip]
 # will be unzipped to appropriate subfolders e.g. ./feeds/RJFA/

@@ -46,6 +46,8 @@ This will typically result in the following directory structure depending on wha
 
 The 'FULL-LATEST' versions are hard links that always point to the most recently downloaded zip file.
 
+Unless otherwise specified in local.cfg ('keep_old' setting), old downloaded ZIP files will be deleted when new files become available
+
 ## Applying partial 'update only' files (TODO)
 
 Some files such as `RJTTC634.ZIP` above (note the `C`) contain only changes that are to be applied to the larger `F` ZIP files. This is not currently applied, but is a planned feature.
