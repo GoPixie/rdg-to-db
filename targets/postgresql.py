@@ -103,9 +103,13 @@ def csv_to_table(
     """
     connection = engine.connect()
     log = logging.getLogger('targets_postgresql_csv_to_table')
+    version = get_latest_version(fprefix)
     if csv_path is None:
-        csv_path = os.path.join(get_remote_csv_dir(),
-                                '-'.join(filter(None, [fprefix, filename, record_type])) + '.csv')
+        if record_type:
+            csv_name = '%s-%s-%s.%s.csv' % (fprefix, filename, record_type, version)
+        else:
+            csv_name = '%s-%s.%s.csv' % (fprefix, filename, version)
+        csv_path = os.path.join(get_remote_csv_dir(), csv_name)
     table_name = '_'.join(filter(None, [fprefix, filename, record_type])).lower()
     inspector = Inspector.from_engine(engine)
     if not isinstance(fields[0], str) and len(fields[0]) == 2:

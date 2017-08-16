@@ -38,14 +38,14 @@ def csv(file_prefixes=None):
         if not os.path.isdir(unzip_dir):
             unzip([fprefix])
         else:
-            with open(os.path.join(unzip_dir, '.version'), 'r') as f:
+            with open(os.path.join(unzip_dir, '.version.' + fprefix), 'r') as f:
                 unzip_version = f.read().strip()
             if unzip_version != version:
                 log.warning('%s: Newer ZIP file available, unzipping again' % (fprefix))
                 unzip([fprefix])
         existing = os.listdir(unzip_dir)
         for filename in sorted(existing):
-            if filename in ['DAT', '.version']:
+            if filename in ['DAT'] or filename.startswith('.version'):
                 continue
             if filename not in file_fields[fprefix]:
                 log.warning('%s: Missing spec for %s' % (fprefix, filename))
@@ -74,11 +74,11 @@ def csv(file_prefixes=None):
                 n += 1
                 done.extend(csv_files)
 
-    # ensure we don't accidentally have out of date csv files hanging around:
+    # remove old versions of files
     csv_dir = get_csv_dir()
     for fname in os.listdir(csv_dir):
         if fname.endswith('.csv') and fname not in done and fname.split('-')[0] in file_prefixes:
-            shutil.move(os.path.join(csv_dir, fname), os.path.join(csv_dir, fname + '.old'))
+            os.unlink(os.path.join(csv_dir, fname))
 
     for fprefix in file_prefixes:
         version_file = os.path.join(csv_dir, '.version.' + fprefix)
@@ -98,6 +98,7 @@ def file_to_csv(fprefix, filename, file_path=None, file_fields=None):
     A file can have multiple record types. Output separate
     CSV files for each one
     """
+    version = get_latest_version(fprefix).lstrip('F')
     if file_path is None:
         file_path = os.path.join(get_download_dir(), fprefix, filename)
     if file_fields is None:
@@ -112,7 +113,7 @@ def file_to_csv(fprefix, filename, file_path=None, file_fields=None):
                 fsuffix = ''
                 if k != '':
                     fsuffix = '-' + k
-                csv_filename = fprefix + '-' + filename + fsuffix + '.csv'
+                csv_filename = fprefix + '-' + filename + fsuffix + '.' + version + '.csv'
                 csv_path = os.path.join(get_csv_dir(), csv_filename)
                 csv_files[csv_filename] = open(csv_path, 'w')
                 fieldnames = [f[0] if not isinstance(f, str) else f for f in fields[k]]
