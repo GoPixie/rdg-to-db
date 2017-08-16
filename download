@@ -162,6 +162,8 @@ def download_data_dot_atoc_feeds(username, password=False, force=False):
             log.warning('Some feeds not found')
 
 
+to_delete = []
+
 def download_url(br, url, force=False):
     log = logging.getLogger('download_url')
     fname = url.split('?')[0].split('/')[-1]
@@ -191,9 +193,7 @@ def download_url(br, url, force=False):
                 if old_versioning:
                     ovg = old_versioning.groups()
                     if (file_sig, zip_suffix) == (ovg[0], ovg[2]) and version_num != ovg[1]:
-                        log.info("Deleting old download %s according to "
-                                 "'keep_old' setting in local.cfg" % (old_fname))
-                        os.unlink(os.path.join(download_dir, old_fname))
+                        to_delete.append(old_fname)
 
 
 if __name__ == '__main__':
@@ -216,6 +216,17 @@ if __name__ == '__main__':
         elif site == 'data.atoc.org':
             download_data_dot_atoc_feeds(
                 creds['username'], creds['password'], args['force'])
+
+        if to_delete:
+            log = logging.getLogger('download_url')
+            log.warning("""Deleting old downloads. Set
+    [Download]
+    keep_old = True
+in local.cfg to keep these files around""")
+            for td_fname in to_delete:
+                log.info("Deleting %s" % (td_fname))
+                os.unlink(os.path.join(download_dir, td_fname))
+
         if args['unzip']:
             from targets import unzip
             unzip(file_fields.keys())
