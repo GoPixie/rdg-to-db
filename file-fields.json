@@ -159,7 +159,8 @@
             "//": "Route Data:",
             "D": [["ROUTE_CODE", 5], ["RECORD_TYPE", 1], ["ENTRY_TYPE", 1], ["CRS_CODE", 3], ["GROUP_MKR", 1], ["MODE_CODE", 3], ["TOC_ID", 2]]
         },
-        "RGC": {  "//": "London Stations"
+        "RGC": {  "//": "London Stations",
+            "": [["CRS_CODE", 3], ["LT_MARKER", 1], ["XLONDON_MARKER", 1]]
         },
         "RGX": {  "//": "New Stations"
         },

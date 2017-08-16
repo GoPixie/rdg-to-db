@@ -159,7 +159,8 @@
             "//": "Route Data:",
             "D": ["invalid"]
         },
-        "RGC": {  "//": "London Stations"
+        "RGC": {  "//": "London Stations",
+            "": ["CRS_CODE"]
         },
         "RGX": {  "//": "New Stations"
         },
