@@ -191,5 +191,13 @@ def create_views(engine):
         # Some magic to remove boilerplate from above view definitions
         # could also define array_aggx as a database function (want to also remove nulls)
         view_select = re.sub('array_aggx\((.*?)\) AS ', r'array_remove(array_agg(\1), null) AS ', view_select)
-        log.info('Creating %s view' % (view_name))
-        connection.execute('CREATE OR REPLACE VIEW %s AS %s;' % (view_name, view_select))
+        try:
+            connection.execute('CREATE OR REPLACE VIEW %s AS %s;' % (view_name, view_select))
+        except Exception as e:
+            missing_relation = re.search('relation ".*?" does not exist', str(e))
+            if missing_relation:
+                log.error('Could not create view %s: required %s' % (view_name, missing_relation.group()))
+            else:
+                raise
+        else:
+            log.info('Created %s view' % (view_name))
