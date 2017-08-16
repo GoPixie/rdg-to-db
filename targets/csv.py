@@ -3,13 +3,14 @@ import csv as csv_module
 import logging
 import json
 import os
+import shutil
 from multiprocessing import Pool
 from time import time as t_time
 
 from lib.util import json_comment_filter
 from lib.fields import iterate_fields
 from targets.unzip import unzip
-from lib.config import get_download_dir, get_unzip_dir, get_csv_dir
+from lib.config import get_download_dir, get_unzip_dir, get_csv_dir, get_latest_version
 
 
 def csv(file_prefixes=None):
@@ -27,12 +28,21 @@ def csv(file_prefixes=None):
     if not file_prefixes:
         file_prefixes = file_fields.keys()
 
+    versions = {}
     done = []
     todo = []
     for fprefix in sorted(file_prefixes):
         unzip_dir = os.path.join(get_unzip_dir(), fprefix)
+        version = get_latest_version(fprefix).lstrip('F')
+        versions[fprefix] = version
         if not os.path.isdir(unzip_dir):
             unzip([fprefix])
+        else:
+            with open(os.path.join(unzip_dir, '.version'), 'r') as f:
+                unzip_version = f.read().strip()
+            if unzip_version != version:
+                log.warning('%s: Newer ZIP file available, unzipping again' % (fprefix))
+                unzip([fprefix])
         existing = os.listdir(unzip_dir)
         for filename in sorted(existing):
             if filename in ['DAT', '.version']:
@@ -69,6 +79,11 @@ def csv(file_prefixes=None):
     for fname in os.listdir(csv_dir):
         if fname.endswith('.csv') and fname not in done and fname.split('-')[0] in file_prefixes:
             shutil.move(os.path.join(csv_dir, fname), os.path.join(csv_dir, fname + '.old'))
+
+    for fprefix in file_prefixes:
+        version_file = os.path.join(csv_dir, '.version.' + fprefix)
+        with open(version_file, 'w') as vf:
+            vf.write(versions[fprefix] + '\n')
 
     log.debug('csv: %ds total time' % (t_time()-stime))
 

@@ -10,7 +10,8 @@ from multiprocessing import Pool
 import re
 
 from lib.util import json_comment_filter
-from lib.config import get_dburi, get_remote_csv_dir
+from targets.csv import csv
+from lib.config import get_dburi, get_remote_csv_dir, get_csv_dir, get_latest_version
 
 
 def postgresql(file_prefixes=None):
@@ -40,6 +41,22 @@ def postgresql(file_prefixes=None):
     todo = []
     drop_views(engine)
     for fprefix in sorted(file_prefixes):
+        csv_dir = get_remote_csv_dir()
+        if not os.path.exists(csv_dir) and csv_dir != get_csv_dir():
+            # We don't have access to the directory we'll be COPYing from
+            # versions are included in CSV filenames so db server will fail
+            # to COPY from an old file
+            pass
+        else:
+            if not os.path.exists(csv_dir):
+                csv([fprefix])
+            else:
+                with open(os.path.join(csv_dir, '.version.' + fprefix), 'r') as f:
+                    csv_version = f.read().strip()
+                if csv_version != get_latest_version(fprefix).lstrip('F'):
+                    log.warning('%s: Newer version available, converting to CSV again' % (fprefix))
+                    csv([fprefix])
+
         for filename in file_fields[fprefix]:
             for record_type, fields in file_fields[fprefix][filename].items():
                 pks = field_pks.get(fprefix, {}).get(filename, {}).get(record_type, [])

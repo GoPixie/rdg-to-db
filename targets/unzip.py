@@ -73,7 +73,7 @@ def unzip_single(zpath, ftname):
                 os.path.join(feed_path, member.filename),
                 os.path.join(feed_path, out_name))
         extract_count += 1
-    version_file = os.path.join(feed_path, '.version')
+    version_file = os.path.join(feed_path, '.version.' + ftname)
     if not versions:
         log.warning('No versioning found')
         if os.path.exists(version_file):
