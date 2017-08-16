@@ -26,40 +26,31 @@ def _multiprocess_makedirs(dir_path, log, dir_type):
             log.info('Creating %s %s directory for first time' % (dir_path, dir_type))
 
 
-def get_download_dir():
-    log = logging.getLogger('get_download_dir')
+def get_dir(dir_type_name):
+    dir_type = dir_type_name.lower()
+    log = logging.getLogger('get_%s_dir' % (dir_type))
     config = configparser.SafeConfigParser()
     config.read('local.cfg')
-    if 'Download' in config:
-        download_dir = config['Download']['download_directory']
+    if dir_type_name in config:
+        dir_path = config[dir_type_name]['%s_directory' % (dir_type)]
+    elif dir_type == 'download':
+        dir_path = os.path.join(os.getcwd(), 'feeds')
     else:
-        download_dir = os.path.join(os.getcwd(), 'feeds')
-    _multiprocess_makedirs(download_dir, log, 'download')
-    return download_dir
+        dir_path = os.path.join(get_download_dir(), dir_type)
+    _multiprocess_makedirs(dir_path, log, dir_type)
+    return dir_path
+
+
+def get_download_dir():
+    return get_dir('Download')
 
 
 def get_unzip_dir():
-    log = logging.getLogger('get_unzip_dir')
-    config = configparser.SafeConfigParser()
-    config.read('local.cfg')
-    if 'Unzip' in config:
-        unzip_dir = config['Unzip']['unzip_directory']
-    else:
-        unzip_dir = os.path.join(os.getcwd(), 'feeds')
-    _multiprocess_makedirs(unzip_dir, log, 'unzip')
-    return unzip_dir
+    return get_dir('Unzip')
 
 
 def get_csv_dir():
-    log = logging.getLogger('get_csv_dir')
-    config = configparser.SafeConfigParser()
-    config.read('local.cfg')
-    if 'CSV' in config:
-        csv_dir = config['CSV']['csv_directory']
-    else:
-        csv_dir = os.path.join(os.getcwd(), 'feeds', 'csv')
-    _multiprocess_makedirs(csv_dir, log, 'csv')
-    return csv_dir
+    return get_dir('CSV')
 
 
 def get_remote_csv_dir():
