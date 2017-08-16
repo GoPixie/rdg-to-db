@@ -31,10 +31,6 @@ def csv(file_prefixes=None):
     for fprefix in sorted(file_prefixes):
         unzip_dir = os.path.join(get_unzip_dir(), fprefix)
         if not os.path.isdir(unzip_dir):
-            zipfile_path = os.path.join(get_download_dir(), fprefix + '-FULL-LATEST.ZIP')
-            if not os.path.exists(zipfile_path):
-                log.error('%s: No downloaded ZIP file found' % (fprefix))
-                continue
             unzip([fprefix])
         existing = os.listdir(unzip_dir)
         for filename in sorted(existing):

@@ -36,15 +36,13 @@ This will typically result in the following directory structure depending on wha
  * /rgb-to-db
      * /feeds
          * RJFAF565.ZIP
-         * RJFA-FULL-LATEST.ZIP
          * RJTTF634.ZIP
-         * RJTT-FULL-LATEST.ZIP
          * RJTTC634.ZIP
          * RJFAC565.ZIP
          * RJRG0472.ZIP
-         * RJRG-FULL-LATEST.ZIP
+         * .versions
 
-The 'FULL-LATEST' versions are hard links that always point to the most recently downloaded zip file.
+The .versions file holds a record of past downloads and is used to find the most recently downloaded zip file.
 
 Unless otherwise specified in local.cfg ('keep_old' setting), old downloaded ZIP files will be deleted when new files become available
 

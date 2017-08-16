@@ -3,6 +3,7 @@ from getpass import getpass
 from collections import OrderedDict
 import logging
 import os
+import re
 
 CRED = 'Login Credentials'
 
@@ -60,6 +61,39 @@ def keep_old_downloads():
         return config['Download'].getboolean('keep_old', False)
     else:
         return False
+
+VERSIONING_RE = '([^0-9]+)([0-9][0-9][0-9]+)([^0-9]+)'
+
+def get_latest_version(file_prefix):
+    log = logging.getLogger('get_latest_version')
+    download_dir = get_download_dir()
+    versions_file = os.path.join(download_dir, '.versions')
+    version = False
+    if os.path.exists(versions_file):
+        with open(versions_file, 'r') as vf:
+            for line in vf.readlines():
+                vff, v, rest = line.split(' ', 2)
+                if vff == file_prefix:
+                    version = v
+                elif file_prefix + 'F' == vff:  # Full file
+                    version = 'F' + v
+                # don't break; keep reading more lines to get the latest one
+    else:
+        possible_versions = []
+        for fname in os.listdir(download_dir):
+            fv = re.search(VERSIONING_RE, fname)
+            if fv:
+                fv_file_sig = fv.groups()[0]
+                if fv_file_sig == file_prefix:
+                    possible_versions.append((int(fv.groups()[1]), fv.groups()[1]))
+                elif fv_file_sig == file_prefix + 'F':
+                    possible_versions.append((int(fv.groups()[1]), 'F'+fv.groups()[1]))
+        if possible_versions:
+            version = max(possible_versions)[1]  # the bit including the 'F'
+            log.warning("Can't find .versions file; were files downloaded using"
+                        " the ./download script?"
+                        " Falling back to highest number found: %s%s" % (file_prefix, version))
+    return version
 
 
 def get_remote_csv_dir():

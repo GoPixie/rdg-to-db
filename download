@@ -8,8 +8,9 @@ import mechanicalsoup
 import logging
 from colorlog import ColoredFormatter
 import json
+from datetime import datetime
 
-from lib.config import get_download_dir, keep_old_downloads, get_rdg_credentials
+from lib.config import get_download_dir, keep_old_downloads, get_rdg_credentials, VERSIONING_RE
 from lib.util import json_comment_filter
 
 parser = argparse.ArgumentParser(
@@ -164,9 +165,9 @@ def download_data_dot_atoc_feeds(username, password=False, force=False):
 def download_url(br, url, force=False):
     log = logging.getLogger('download_url')
     fname = url.split('?')[0].split('/')[-1]
-    zip_path = os.path.join(get_download_dir(), fname)
-    version_groups = '([^0-9]+)[0-9][0-9][0-9]+([^0-9]+)'
-    versioning = re.search(version_groups, fname)
+    download_dir = get_download_dir()
+    zip_path = os.path.join(download_dir, fname)
+    versioning = re.search(VERSIONING_RE, fname)
     if not force and versioning and fname and os.path.exists(zip_path):
         log.info('Found existing local file: %s' % (zip_path))
     else:
@@ -174,17 +175,25 @@ def download_url(br, url, force=False):
         with open(zip_path, 'wb') as zf:
             zf.write(response.content)
             log.info('Downloaded to %s' % (zip_path))
-    if fname[4] != 'C' and fname[:4] in file_fields.keys():
-        latest_path = os.path.join(get_download_dir(), fname[:4]+'-FULL-LATEST.ZIP')
-        if os.path.exists(latest_path):
-            os.unlink(latest_path)
-        os.link(zip_path, latest_path)
-    if versioning and not keep_old_downloads():
-        for old_fname in os.listdir(get_download_dir()):
-            old_versioning = re.search(version_groups, old_fname)
-            if old_versioning and versioning.groups() == old_versioning.groups():
-                log.info("Deleting old download %s according to 'keep_old' setting in local.cfg" % (old_fname))
-                os.unlink(os.path.join(get_download_dir(), old_fname))
+    if versioning:
+        file_sig, version_num, zip_suffix = versioning.groups()
+        if zip_suffix.lower() != '.zip':
+            # probably not a problem
+            log.warning('Expected versioned file ending in .zip, got %s: %s' % (zip_suffix, fname))
+        version_file = os.path.join(download_dir, '.versions')
+        with open(version_file, 'a') as vf:
+            # append to facilitate simultaneous access and for some sort of audit log
+            vf.writelines('%s %s %s\n' % (file_sig, version_num,
+                                          datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')))
+        if not keep_old_downloads():
+            for old_fname in os.listdir(download_dir):
+                old_versioning = re.search(VERSIONING_RE, old_fname)
+                if old_versioning:
+                    ovg = old_versioning.groups()
+                    if (file_sig, zip_suffix) == (ovg[0], ovg[2]) and version_num != ovg[1]:
+                        log.info("Deleting old download %s according to "
+                                 "'keep_old' setting in local.cfg" % (old_fname))
+                        os.unlink(os.path.join(download_dir, old_fname))
 
 
 if __name__ == '__main__':
