@@ -1,5 +1,5 @@
 from sqlalchemy import Column
-from sqlalchemy.types import String, Date, Text
+from sqlalchemy.types import String, Date
 from sqlalchemy.dialects.postgresql import ARRAY, DATERANGE
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -28,10 +28,10 @@ class RouteCode(Base):
 
     london_marker = Column(String(1))
     # RJRG/RGK also is the only source for TOC/Mode exclusions:
-    toc_inclusions = Column(ARRAY(Text()))
-    toc_exclusions = Column(ARRAY(Text()))
-    mode_inclusions = Column(ARRAY(Text()))
-    mode_exclusions = Column(ARRAY(Text()))
+    toc_inclusions = Column(ARRAY(String(2)))
+    toc_exclusions = Column(ARRAY(String(2)))
+    mode_inclusions = Column(ARRAY(String(3)))
+    mode_exclusions = Column(ARRAY(String(3)))
 
     def __repr__(self):
         return '<ROUTE_CODE %s: %s>' % (self.route_code, self.description)
