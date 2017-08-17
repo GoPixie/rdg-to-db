@@ -42,6 +42,9 @@ arg(
 
 file_fields = json_comment_filter(json.load(open('file-fields.json', 'r')))
 
+# global variable to delay deletion to end of a run
+to_delete = []
+
 
 def download_atocrsp_feeds(username, password=False, force=False):
     """
@@ -162,8 +165,6 @@ def download_data_dot_atoc_feeds(username, password=False, force=False):
             log.warning('Some feeds not found')
 
 
-to_delete = []
-
 def download_url(br, url, force=False):
     log = logging.getLogger('download_url')
     fname = url.split('?')[0].split('/')[-1]
@@ -223,9 +224,11 @@ if __name__ == '__main__':
     [Download]
     keep_old = True
 in local.cfg to keep these files around""")
+            download_dir = get_download_dir()
             for td_fname in to_delete:
                 log.info("Deleting %s" % (td_fname))
                 os.unlink(os.path.join(download_dir, td_fname))
+            to_delete = []
 
         if args['unzip']:
             from targets import unzip
