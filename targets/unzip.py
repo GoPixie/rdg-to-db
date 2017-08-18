@@ -49,7 +49,7 @@ def unzip_single_tup(tup):
 def unzip_single(zpath, ftname):
     log = logging.getLogger('targets_unzip')
     zz = ZipFile(open(zpath, 'rb'))
-    unzip_dir = get_unzip_dir()
+    unzip_subdir = os.path.join(get_unzip_dir(), ftname)
     versions = defaultdict(int)
     extract_count = 0
     for member in zz.infolist():
@@ -65,13 +65,13 @@ def unzip_single(zpath, ftname):
                 version = out_name.split('.')[0]
                 versions[version] += 1
                 out_name = out_name.split('.', 1)[1]
-        zz.extract(member, unzip_dir)
+        zz.extract(member, unzip_subdir)
         if out_name != member.filename:
             shutil.move(
-                os.path.join(unzip_dir, member.filename),
-                os.path.join(unzip_dir, out_name))
+                os.path.join(unzip_subdir, member.filename),
+                os.path.join(unzip_subdir, out_name))
         extract_count += 1
-    version_file = os.path.join(unzip_dir, '.version.' + ftname)
+    version_file = os.path.join(unzip_subdir, '.version.' + ftname)
     if not versions:
         log.warning('No versioning found')
         if os.path.exists(version_file):
@@ -87,4 +87,4 @@ def unzip_single(zpath, ftname):
                         % (', '.join(map(int, sorted(versions)))))
         with open(version_file, 'w') as vf:
             vf.write(highest_version + '\n')
-    log.info('%s Extracted %d files to %s' % (ftname, extract_count, unzip_dir))
+    log.info('%s Extracted %d files to %s' % (ftname, extract_count, unzip_subdir))
