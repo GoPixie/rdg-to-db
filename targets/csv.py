@@ -1,9 +1,7 @@
-
 import csv as csv_module
 import logging
 import json
 import os
-import shutil
 from multiprocessing import Pool
 from time import time as t_time
 
@@ -118,7 +116,8 @@ def file_to_csv(fprefix, filename, file_path=None, file_fields=None):
                 csv_files[csv_filename] = open(csv_path, 'w')
                 fieldnames = [f[0] if not isinstance(f, str) else f for f in fields[k]]
                 fieldnames = [f for f in fieldnames if f not in ['RECORD_TYPE', 'UPDATE_MARKER']]
-                csv_writers[k] = csv_module.DictWriter(csv_files[csv_filename], fieldnames=fieldnames)
+                csv_writers[k] = csv_module.DictWriter(csv_files[csv_filename],
+                                                       fieldnames=fieldnames)
                 csv_writers[k].writeheader()
             if k:
                 del record['RECORD_TYPE']  # contained in filename

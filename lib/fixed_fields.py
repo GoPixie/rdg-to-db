@@ -5,8 +5,10 @@ import logging
 
 UPDATE_MARKER_vals = 'RIAD'
 
+
 class NotFixedFieldsException(Exception):
     pass
+
 
 def field_sum(field_pairs):
     return sum(f[1] for f in field_pairs)

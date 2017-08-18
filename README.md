@@ -86,5 +86,5 @@ Test syntax according to .editorconfig and [pep8](https://www.python.org/dev/pep
     pip install flake8
     npm install -g eclint
 
-    flake8 $( git grep -l '^#!/usr/bin/env python3' && git ls-files *.py ) --max-line-length=99
+    flake8 $( git grep -l '^#!/usr/bin/env python3' && git ls-files '*.py' ) --max-line-length=99
     eclint check $( git ls-files )

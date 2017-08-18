@@ -6,6 +6,7 @@ import os
 import re
 
 CRED = 'Login Credentials'
+VERSIONING_RE = '([^0-9]+)([0-9][0-9][0-9]+)([^0-9]+)'
 
 
 def read_config():
@@ -62,7 +63,6 @@ def keep_old_downloads():
     else:
         return False
 
-VERSIONING_RE = '([^0-9]+)([0-9][0-9][0-9]+)([^0-9]+)'
 
 def get_latest_version(file_prefix):
     log = logging.getLogger('get_latest_version')
