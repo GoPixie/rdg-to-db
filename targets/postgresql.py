@@ -137,12 +137,14 @@ def csv_to_table(
 
     trans = connection.begin()
     try:
+        # recreate schema
         table.drop(
             connection,
             checkfirst=True,  # don't issue a DROP if no table exists
         )
         table.create(connection)
 
+        # data insert using COPY method
         force_not_null = ''
         if pks and pks != ['invalid']:
             force_not_null = ', FORCE_NOT_NULL ("%s")' % ('", "'.join([p.lower() for p in pks]))
