@@ -175,7 +175,7 @@ VIEWS = [
         ELSE null END) AS crs_exclusions,
     array_aggx(CASE WHEN incl_excl = 'I' THEN rjfa_rte_l.nlc_code
         ELSE null END) AS nls_inclusions,
-    array_aggx(CASE WHEN incl_excl = 'E' THEN rjfa_rte_l.crs_code
+    array_aggx(CASE WHEN incl_excl = 'E' THEN rjfa_rte_l.nlc_code
         ELSE null END) AS nlc_exclusions
     FROM rjfa_rte_l
     GROUP BY route_code, end_date"""),
