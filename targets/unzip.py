@@ -88,3 +88,32 @@ def unzip_single(zpath, ftname):
         with open(version_file, 'w') as vf:
             vf.write(highest_version + '\n')
     log.info('%s Extracted %d files to %s' % (ftname, extract_count, unzip_subdir))
+
+
+def iterate_unzipped(file_prefixes=None):
+    log = logging.getLogger('iterate_unzipped')
+    file_fields = json_comment_filter(json.load(open('file-fields.json', 'r')))
+    if not file_prefixes:
+        file_prefixes = file_fields.keys()
+    for fprefix in sorted(file_prefixes):
+        version = get_latest_version(fprefix).lstrip('F')
+        unzip_dir = os.path.join(get_unzip_dir(), fprefix)
+        if not os.path.isdir(unzip_dir):
+            unzip([fprefix])
+        else:
+            with open(os.path.join(unzip_dir, '.version.' + fprefix), 'r') as f:
+                unzip_version = f.read().strip()
+            if unzip_version != version:
+                import pdb; pdb.set_trace();
+                log.warning('%s: Newer ZIP file available, unzipping again' % (fprefix))
+                unzip([fprefix])
+        existing = os.listdir(unzip_dir)
+        for filename in sorted(existing):
+            if filename in ['DAT'] or filename.startswith('.version'):
+                continue
+            if filename not in file_fields[fprefix]:
+                log.warning('%s: Missing spec for %s' % (fprefix, filename))
+                continue
+            log.debug('%s: Found spec for %s' % (fprefix, filename))
+            file_path = os.path.join(unzip_dir, filename)
+            yield fprefix, filename, file_path, file_fields

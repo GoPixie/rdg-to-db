@@ -11,4 +11,8 @@ unzip_directory = ./feeds/
 csv_directory = ./csv/
 
 [Database]
-dburi = postgresql://postgres@localhost:5432/rdg
+# some possible connection strings (http://docs.sqlalchemy.org/en/latest/core/engines.html)
+#dburi = postgresql://postgres@localhost:5432/rdg
+#dburi = mysql://rdgtodb:password@localhost/rdg
+#dburi = sqlite:///rdg.db  # path relative to current working directory
+#dburi = sqlite:////absolute/path/to/rdg.db
