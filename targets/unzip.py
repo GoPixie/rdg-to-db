@@ -8,7 +8,7 @@ from multiprocessing import Pool
 from time import time as t_time
 
 from lib.util import json_comment_filter
-from lib.config import get_download_dir, get_latest_version
+from lib.config import get_download_dir, get_unzip_dir, get_latest_version
 
 
 def unzip(file_prefixes=None):
@@ -49,9 +49,7 @@ def unzip_single_tup(tup):
 def unzip_single(zpath, ftname):
     log = logging.getLogger('targets_unzip')
     zz = ZipFile(open(zpath, 'rb'))
-    feed_path = os.path.join(get_download_dir(), ftname)
-    if not os.path.exists(feed_path):
-        os.makedirs(feed_path)
+    unzip_dir = get_unzip_dir()
     versions = defaultdict(int)
     extract_count = 0
     for member in zz.infolist():
@@ -67,13 +65,13 @@ def unzip_single(zpath, ftname):
                 version = out_name.split('.')[0]
                 versions[version] += 1
                 out_name = out_name.split('.', 1)[1]
-        zz.extract(member, feed_path)
+        zz.extract(member, unzip_dir)
         if out_name != member.filename:
             shutil.move(
-                os.path.join(feed_path, member.filename),
-                os.path.join(feed_path, out_name))
+                os.path.join(unzip_dir, member.filename),
+                os.path.join(unzip_dir, out_name))
         extract_count += 1
-    version_file = os.path.join(feed_path, '.version.' + ftname)
+    version_file = os.path.join(unzip_dir, '.version.' + ftname)
     if not versions:
         log.warning('No versioning found')
         if os.path.exists(version_file):
@@ -89,4 +87,4 @@ def unzip_single(zpath, ftname):
                         % (', '.join(map(int, sorted(versions)))))
         with open(version_file, 'w') as vf:
             vf.write(highest_version + '\n')
-    log.info('%s Extracted %d files to %s' % (ftname, extract_count, feed_path))
+    log.info('%s Extracted %d files to %s' % (ftname, extract_count, unzip_dir))
