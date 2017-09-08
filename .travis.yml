@@ -11,4 +11,4 @@ install:
   - npm install -g eclint
 script:
   - flake8 $( git grep -l '^#!/usr/bin/env python3' && git ls-files '*.py' ) --max-line-length=99
-  - eclint check $( git ls-files )
+  - eclint check --indent_size -1 $( git ls-files )

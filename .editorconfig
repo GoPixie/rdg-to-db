@@ -17,7 +17,7 @@ charset = utf-8
 # 4 space indentation
 [*.py]
 indent_style = space
-indent_size = unset  # (should be 4) eclint was giving spurious warnings, let flake8 handle it
+indent_size = 4
 
 [*.{json,rst,yml}]
 indent_style = space
