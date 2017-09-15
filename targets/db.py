@@ -133,6 +133,8 @@ def file_to_db(
     row_counts = defaultdict(int)
     new_tables = []
     batches = defaultdict(list)
+    batch_size = 10000
+    last_batches = []
     try:
         for record in iterate_fields(file_path, fields):
             record_type = record.get('RECORD_TYPE', '')
@@ -151,12 +153,35 @@ def file_to_db(
                 del record['RECORD_TYPE']  # encapsulated in table name
 
             batches[table].append(record)
-            if len(batches[table]) >= 10000:
+            if len(batches[table]) >= batch_size:
                 log.debug('Inserting %d to %s' % (len(batches[table]), table.name))
+                stime = t_time()
                 connection.execute(
                     table.insert(),
                     batches[table]
                 )
+                batch_perf = (t_time() - stime) / batch_size
+                last_batches.append((batch_size, batch_perf))
+                if len(last_batches) == 1:
+                    pass
+                elif len(last_batches) == 2:
+                    batch_size *= 2
+                else:
+                    # adaptively scale the batch size up or down
+                    last_batch_size, last_batch_perf = last_batches[-2]
+                    if batch_perf < last_batch_perf:
+                        # better than last
+                        if last_batch_size < batch_size:
+                            batch_size *= 2
+                        else:
+                            batch_size /= 3
+                    else:
+                        if last_batch_size < batch_size:
+                            batch_size /= 2
+                        else:
+                            batch_size *= 3
+                    batch_size = max(1000, batch_size)
+
                 row_counts[table] += len(batches[table])
                 batches[table] = []
 
