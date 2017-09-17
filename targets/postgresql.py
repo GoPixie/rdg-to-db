@@ -12,6 +12,7 @@ from targets.csv import csv
 from lib.config import get_dburi, get_remote_csv_dir, get_csv_dir, get_latest_version
 from .db import table_from_fields, drop_create_table
 
+
 def postgresql(file_prefixes=None):
     """
     Move CSV files into corresponding postgresql tables
@@ -109,7 +110,7 @@ def csv_to_table(
         csv_path = os.path.join(get_remote_csv_dir(), csv_name)
 
     table = table_from_fields(engine, metadata, fprefix, filename,
-                         record_type, fields, pks)
+                              record_type, fields, pks)
 
     inspector = Inspector.from_engine(engine)
     creating = table.name in inspector.get_table_names()

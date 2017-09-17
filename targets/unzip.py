@@ -104,7 +104,6 @@ def iterate_unzipped(file_prefixes=None):
             with open(os.path.join(unzip_dir, '.version.' + fprefix), 'r') as f:
                 unzip_version = f.read().strip()
             if unzip_version != version:
-                import pdb; pdb.set_trace();
                 log.warning('%s: Newer ZIP file available, unzipping again' % (fprefix))
                 unzip([fprefix])
         existing = os.listdir(unzip_dir)

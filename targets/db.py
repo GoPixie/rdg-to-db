@@ -37,7 +37,8 @@ def db(file_prefixes=None):
     for fprefix, filename, file_path, file_fields in iterate_unzipped(file_prefixes):
         if False:
             # don't multiprocess
-            tables, row_counts, new_tables = file_to_db(engine, metadata, fprefix, filename, file_path, file_fields)
+            tables, row_counts, new_tables = file_to_db(
+                engine, metadata, fprefix, filename, file_path, file_fields)
             for record_type, table in tables.items():
                 created_str = 'Recreated'
                 if table in new_tables:
@@ -57,7 +58,7 @@ def db(file_prefixes=None):
                     if table in new_tables:
                         created_str = 'Created'
                     log.info('%s table %s (%d rows)' % (created_str,
-                                                      table.name, row_counts[table]))
+                                                        table.name, row_counts[table]))
                 n += 1
 
     log.debug('db: %ds total time' % (t_time()-stime))
@@ -76,7 +77,6 @@ def drop_create_table(connection, table):
 def table_from_fields(
         engine, metadata,
         fprefix, filename, record_type, table_fields, pks=[]):
-    log = logging.getLogger('targets_db_create_table')
     table_name = '_'.join(filter(None, [fprefix, filename, record_type])).lower()
     if not isinstance(table_fields[0], str) and len(table_fields[0]) == 2:
         column_names = [f[0] for f in table_fields]
@@ -108,6 +108,7 @@ def file_to_db_tup(tup):
     metadata = MetaData()
     tup_with_cx = (engine, metadata) + tup
     return file_to_db(*tup_with_cx)
+
 
 def file_to_db(
         engine, metadata,
@@ -141,7 +142,7 @@ def file_to_db(
 
             if record_type not in tables:
                 table = table_from_fields(engine, metadata, fprefix, filename,
-                                   record_type, fields[record_type], pks)
+                                          record_type, fields[record_type], pks)
                 if table.name not in inspector.get_table_names():
                     new_tables.append(table)
                 tables[record_type] = table

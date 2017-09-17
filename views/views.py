@@ -12,7 +12,6 @@ def get_view_defs(connection):
         if (view_file.count('.') == 1 and view_file.endswith('.sql')) or \
            view_file.endswith('.' + db_type + '.sql'):
             with open(os.path.join(views_dir, view_file), 'r') as v:
-                curr_view = ''
                 curr_view_name = None
                 for l in v.readlines():
                     if l.startswith('CREATE VIEW'):
@@ -29,7 +28,7 @@ def filter_dependent_views(views, table_name=None):
         if view_name == table_name:
             continue
         if 'from ' + table_name in view_def.lower() or \
-            'join ' + table_name in view_def.lower():
+           'join ' + table_name in view_def.lower():
             dependent_views.add(view_name)
             rest = {vn: vd for vn, vd in views.items() if vn != view_name}
             recurse = filter_dependent_views(rest, view_name)
