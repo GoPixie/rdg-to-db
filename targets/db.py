@@ -50,9 +50,10 @@ def db(file_prefixes=None):
     if todo:
         n = 1
         with Pool() as pool:
-            for tables, row_counts, new_tables in pool.imap_unordered(file_to_db_tup, todo):
+            for tables, row_counts, new_tables, rfprefix, rfilename \
+                 in pool.imap_unordered(file_to_db_tup, todo):
                 log.info('Finished processing %s/%s (%d of %d)' % (
-                    fprefix, filename, n, len(todo)))
+                    rfprefix, rfilename, n, len(todo)))
                 for record_type, table in tables.items():
                     created_str = 'Recreated'
                     if table in new_tables:
@@ -197,4 +198,4 @@ def file_to_db(
     except OperationalError as oe:
         raise
 
-    return tables, row_counts, new_tables
+    return tables, row_counts, new_tables, fprefix, filename
