@@ -37,6 +37,7 @@ def iterate_fixed_fields(file_path, fields, full_only=True):
     with open(file_path, 'r') as f:
         last_fi = 0
         last_rtime = 0
+        rstime = t_time()
         stime = t_time()
         for fi, line in enumerate(f.readlines()):
             if line.startswith('/'):
@@ -99,9 +100,9 @@ def iterate_fixed_fields(file_path, fields, full_only=True):
             yield ld
 
             # Some progress indication if things are taking a long time
-            if fi % 10 == 0:
-                rtime = round((t_time() - stime)/10)
-                if last_rtime != rtime:
+            if fi % 1000 == 0:
+                rtime = round((t_time() - rstime)/10)
+                if last_rtime != rtime:  # at most every 10 seconds
                     lines_per_sec = (fi - last_fi)/(t_time() - stime)
                     if lines_per_sec > 1000:
                         per_sec = '%dK' % (lines_per_sec/1000)
@@ -109,7 +110,8 @@ def iterate_fixed_fields(file_path, fields, full_only=True):
                         per_sec = '%d' % (lines_per_sec)
                     else:
                         per_sec = '%.2f' % (lines_per_sec)
-                    log.debug('%s %s lines per second' % (file_sig, per_sec))
+                    log.debug('%s %s lines per second %s %s %s %s' %
+                              (file_sig, per_sec, last_fi, fi, last_rtime, rtime))
                     last_fi = fi
                     stime = t_time()
                     last_rtime = rtime
