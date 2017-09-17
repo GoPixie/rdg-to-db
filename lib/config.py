@@ -7,6 +7,7 @@ import re
 
 CRED = 'Login Credentials'
 VERSIONING_RE = '([^0-9]+)([0-9][0-9][0-9]+)([^0-9]+)'
+working_dburi = None
 
 
 def read_config():
@@ -119,11 +120,15 @@ def get_dburi():
     config.read('local.cfg')
     if 'Database' in config and 'dburi' in config['Database']:
         dburi = config['Database']['dburi']
+    elif working_dburi:
+        return working_dburi
     else:
+        global working_dburi
         log.info('No database connection string found in local.cfg')
         dburi = input('DB Connection String (default postgresql://postgres@localhost:5432/rdg): ')
         if not dburi.strip():
             dburi = 'postgresql://postgres@localhost:5432/rdg'
+        working_dburi = dburi
     return dburi
 
 
