@@ -12,3 +12,4 @@ six==1.10.0
 urllib3==1.22
 SQLAlchemy==1.1.13
 psycopg2==2.7.3
+PyMySQL==0.7.11
