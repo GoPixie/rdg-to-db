@@ -61,7 +61,7 @@ def csv(file_prefixes=None):
         if fname.endswith('.csv') and fname not in done and fname.split('-')[0] in file_prefixes:
             os.unlink(os.path.join(csv_dir, fname))
 
-    for fprefix in file_prefixes:
+    for fprefix in versions:
         version_file = os.path.join(csv_dir, '.version.' + fprefix)
         with open(version_file, 'w') as vf:
             vf.write(versions[fprefix] + '\n')
