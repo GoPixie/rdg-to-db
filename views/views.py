@@ -2,12 +2,13 @@ import logging
 from collections import OrderedDict
 import os
 import re
+from lib.config import get_root_path
 
 
 def get_view_defs(connection):
     views = OrderedDict()
     db_type = str(connection.engine.url).split(':')[0]
-    views_dir = os.path.join(os.getcwd(), 'views')
+    views_dir = get_root_path('views')
     for view_file in os.listdir(views_dir):
         if (view_file.count('.') == 1 and view_file.endswith('.sql')) or \
            view_file.endswith('.' + db_type + '.sql'):

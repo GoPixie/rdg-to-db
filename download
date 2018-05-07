@@ -10,7 +10,8 @@ from colorlog import ColoredFormatter
 import json
 from datetime import datetime
 
-from lib.config import get_download_dir, keep_old_downloads, get_rdg_credentials, VERSIONING_RE
+from lib.config import get_root_path, get_download_dir, keep_old_downloads, get_rdg_credentials, \
+    VERSIONING_RE
 from lib.util import json_comment_filter
 
 parser = argparse.ArgumentParser(
@@ -40,7 +41,7 @@ arg(
     help="Download from data.atoc.org (doesn't include Routeing data). "
     "The default is dtdportal.atocrsp.org")
 
-file_fields = json_comment_filter(json.load(open('file-fields.json', 'r')))
+file_fields = json_comment_filter(json.load(open(get_root_path('file-fields.json'), 'r')))
 
 # global variable to delay deletion to end of a run
 to_delete = []

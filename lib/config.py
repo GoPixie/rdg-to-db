@@ -10,9 +10,13 @@ VERSIONING_RE = '([^0-9]+)([0-9][0-9][0-9]+)([^0-9]+)'
 working_dburi = None
 
 
+def get_root_path(fname):
+    return os.path.join(os.path.dirname(__file__), '..', fname)
+
+
 def read_config():
     config = configparser.SafeConfigParser()
-    config.read('accounts.cfg')
+    config.read(get_root_path('accounts.cfg'))
     return config
 
 
@@ -33,11 +37,11 @@ def get_dir(dir_type_name):
     dir_type = dir_type_name.lower()
     log = logging.getLogger('get_%s_dir' % (dir_type))
     config = configparser.SafeConfigParser()
-    config.read('local.cfg')
+    config.read(get_root_path('local.cfg'))
     if dir_type_name in config:
         dir_path = config[dir_type_name]['%s_directory' % (dir_type)]
     elif dir_type == 'download':
-        dir_path = os.path.join(os.getcwd(), 'feeds')
+        dir_path = get_root_path('feeds')
     else:
         dir_path = os.path.join(get_download_dir(), dir_type)
     _multiprocess_makedirs(dir_path, log, dir_type)
@@ -103,21 +107,21 @@ def get_remote_csv_dir():
     with postgresql
     """
     config = configparser.SafeConfigParser()
-    config.read('local.cfg')
+    config.read(get_root_path('local.cfg'))
     if 'CSV' in config:
         if 'remote_csv_directory' in config['CSV']:
             csv_dir = config['CSV']['remote_csv_directory']
         else:
             csv_dir = config['CSV']['csv_directory']
     else:
-        csv_dir = os.path.join(os.getcwd(), 'feeds', 'csv')
+        csv_dir = os.path.join(get_root_path('feeds'), 'csv')
     return csv_dir
 
 
 def get_dburi():
     log = logging.getLogger('get_dburi')
     config = configparser.SafeConfigParser()
-    config.read('local.cfg')
+    config.read(get_root_path('local.cfg'))
     if 'Database' in config and 'dburi' in config['Database']:
         dburi = config['Database']['dburi']
     elif working_dburi:
@@ -165,6 +169,6 @@ def get_rdg_credentials(args, site):
                 ('username', r['username']),
                 ('password', r['password'])
             ])
-            with open('accounts.cfg', 'w') as configfile:
+            with open(get_root_path('accounts.cfg'), 'w') as configfile:
                 existing.write(configfile)
     return r
