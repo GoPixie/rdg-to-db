@@ -190,7 +190,7 @@ def download_url(br, url, force=False):
         if latest_path:
             if os.path.exists(latest_path):
                 os.unlink(latest_path)
-            os.link(zip_path, latest_path)
+            os.symlink(zip_path, latest_path)
 
         if zip_suffix.lower() != '.zip':
             # probably not a problem
