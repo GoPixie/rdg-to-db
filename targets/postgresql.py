@@ -106,7 +106,7 @@ def csv_to_table(
     """
     log = logging.getLogger('targets_postgresql_csv_to_table')
 
-    version = get_latest_version(fprefix)
+    version = get_latest_version(fprefix).lstrip('F')
     if csv_path is None:
         if record_type:
             csv_name = '%s-%s-%s.%s.csv' % (fprefix, filename, record_type, version)
