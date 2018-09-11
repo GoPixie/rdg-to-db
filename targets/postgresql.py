@@ -10,7 +10,8 @@ from multiprocessing import Pool
 from lib.util import json_comment_filter
 from targets.csv import csv
 from lib.config import get_dburi, get_remote_csv_dir, get_csv_dir, get_latest_version
-from .db import table_from_fields, drop_create_table
+from .db import table_from_fields, drop_create_table, full_view_refresh
+from views.views import create_views
 
 
 def postgresql(file_prefixes=None):
@@ -30,7 +31,7 @@ def postgresql(file_prefixes=None):
     stime = t_time()
     dburi = get_dburi()
     engine = create_engine(dburi)
-    engine.connect()  # trigger conn. related exceptions, e.g. if db doesn't exist
+    connection = engine.connect()  # trigger conn. related exceptions, e.g. if db doesn't exist
     metadata = MetaData()
 
     file_fields = json_comment_filter(json.load(open('file-fields.json', 'r')))
@@ -79,6 +80,10 @@ def postgresql(file_prefixes=None):
                 elif table_name:
                     log.info('Finished creating %s (%d of %d)' % (table_name, n, len(todo)))
                 n += 1
+
+    if full_view_refresh:
+        create_views(connection)
+
     log.debug('csv to postgresql: %ds total time' % (t_time()-stime))
 
 

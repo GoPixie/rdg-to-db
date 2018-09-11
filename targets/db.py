@@ -1,6 +1,6 @@
 from sqlalchemy import MetaData, create_engine, Table, Column
 from sqlalchemy.engine.reflection import Inspector
-from sqlalchemy.types import String, Date, Time, Text
+from sqlalchemy.types import String, Date, Time, Text, Integer
 from sqlalchemy.exc import OperationalError
 import logging
 import json
@@ -14,6 +14,12 @@ from lib.fields import iterate_fields
 from lib.config import get_dburi, get_download_dir
 from .unzip import iterate_unzipped
 from views.views import drop_views, create_views
+
+
+# This is a hardcoded off option as during execution it leaves views
+# unavailable. Needed for cross-table schema changes e.g. route_code
+# from CHARACTER VARYING() to INTEGER
+full_view_refresh = False
 
 
 def db(file_prefixes=None):
@@ -30,7 +36,7 @@ def db(file_prefixes=None):
     stime = t_time()
     dburi = get_dburi()
     engine = create_engine(dburi)
-    engine.connect()  # trigger conn. related exceptions, e.g. if db doesn't exist
+    connection = engine.connect()  # trigger conn. related exceptions, e.g. if db doesn't exist
     metadata = MetaData()
 
     todo = []
@@ -62,6 +68,9 @@ def db(file_prefixes=None):
                                                         table.name, row_counts[table]))
                 n += 1
 
+    if full_view_refresh:
+        create_views(connection)
+
     log.debug('db: %ds total time' % (t_time()-stime))
 
 
@@ -72,7 +81,11 @@ def drop_create_table(connection, table):
         checkfirst=True,  # don't issue a DROP if no table exists
     )
     table.create(connection)
-    create_views(connection, table.name)
+    if full_view_refresh:
+        # delay view creation until all dependent tables are updated
+        pass
+    else:
+        create_views(connection, table.name)
 
 
 def table_from_fields(
@@ -93,6 +106,8 @@ def table_from_fields(
             type_ = Date()
         elif column_name.endswith('_TIME'):
             type_ = Time()
+        elif column_name in ['ROUTE_CODE']:
+            type_ = Integer()
         elif column_size is None:
             type_ = Text()
         else:

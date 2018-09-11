@@ -19,6 +19,9 @@ def iterate_fields(file_path, fields, convert_dates=True, full_only=True):
                         raise Exception('%s Unexpected size for apparant date field %s %s %d' %
                                         (file_sig, k, r[k], len(r[k])))
                     r[k] = '-'.join([r[k][4:], r[k][2:4], r[k][:2]])
+        for k in ['ROUTE_CODE']:
+            if k in r and r[k] == '*' * len(r[k]):
+                r[k] = '-1'  # can't be null in case it's needed to form a composite primary key
         yield r
 
 
