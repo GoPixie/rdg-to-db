@@ -16,8 +16,8 @@ def get_view_defs(connection):
                 curr_view_name = None
                 for l in v.readlines():
                     if l.startswith('CREATE VIEW'):
-                        curr_view_name = l.split('CREATE VIEW ')[1].split(' AS')[0]
-                        views[curr_view_name] = ''
+                        curr_view_name, l_rest = l.split('CREATE VIEW ')[1].split(' AS', 1)
+                        views[curr_view_name] = l_rest
                     elif curr_view_name:
                         views[curr_view_name] += l
     return views
