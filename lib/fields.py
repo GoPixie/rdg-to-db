@@ -4,6 +4,12 @@ import logging
 from .fixed_fields import iterate_fixed_fields, NotFixedFieldsException
 
 
+# not 'RESTRICTED_BY_DATE'
+DATE_FIELDS = ['START_DATE', 'END_DATE', 'QUOTE_DATE', 'LAST_VALID_DATE', 'LAST_VALID_DAY']
+
+# FARE is in cents, not decimal
+INT_FIELDS = ['FARE', 'ROUTE_CODE']
+
 def iterate_fields(file_path, fields, convert_dates=True, full_only=True):
     file_sig = '/'.join(file_path.split('/')[-2:])
     for r in _iterate_fields(file_path, fields, full_only):
@@ -14,7 +20,7 @@ def iterate_fields(file_path, fields, convert_dates=True, full_only=True):
             del r['UPDATE_MARKER']
         if convert_dates:
             for k in r.keys():
-                if k.endswith('_DATE') and not k.endswith('_BY_DATE') and r[k]:
+                if k in DATE_FIELDS and r[k]:
                     if len(r[k]) != 8:
                         raise Exception('%s Unexpected size for apparant date field %s %s %d' %
                                         (file_sig, k, r[k], len(r[k])))

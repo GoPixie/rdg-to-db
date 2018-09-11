@@ -10,7 +10,7 @@ from time import time as t_time
 from collections import defaultdict
 
 from lib.util import json_comment_filter
-from lib.fields import iterate_fields
+from lib.fields import iterate_fields, DATE_FIELDS, INT_FIELDS
 from lib.config import get_dburi, get_download_dir
 from .unzip import iterate_unzipped
 from views.views import drop_views, create_views
@@ -102,11 +102,11 @@ def table_from_fields(
     for column_size, column_name in zip(column_sizes, column_names):
         if column_name in ['RECORD_TYPE', 'UPDATE_MARKER']:
             continue
-        if column_name.endswith('_DATE') and not column_name.endswith('_BY_DATE'):
+        if column_name in DATE_FIELDS:
             type_ = Date()
         elif column_name.endswith('_TIME'):
             type_ = Time()
-        elif column_name in ['ROUTE_CODE']:
+        elif column_name in INT_FIELDS:
             type_ = Integer()
         elif column_size is None:
             type_ = Text()
