@@ -22,7 +22,7 @@ UNION
 CREATE VIEW flow_fare AS
 SELECT origin_code, destination_code, ticket_code, fare, restriction_code, route_code, status_code, usage_code, rjfa_ffl_f_dual.end_date, rjfa_ffl_f_dual.start_date, toc, cross_london_ind, ns_disc_ind, publication_ind from rjfa_ffl_f_dual
 INNER JOIN rjfa_ffl_t using (flow_id)
-WHERE usage_code != 'C'; -- C type records are summation records, used for creating G records and are not used for chargeable fares.
+WHERE usage_code != 'C'; -- C type records are summation records, used for creating G records and are not used for chargeable fares.  These have been removed with introduction of PMS;
 
 
 CREATE VIEW flow_fare_ticket AS
@@ -175,21 +175,10 @@ CREATE VIEW time_restriction AS
     rjfa_rst_td.date_to,
     rjfa_rst_td.days,
     rjfa_rst_tt.out_ret AS tt_out_ret,
-    rjfa_rst_tt.toc_code,
-    rjfa_rst_tp.out_ret AS tp_out_ret,
-    rjfa_rst_tp.barred_class,
-    rjfa_rst_tp.barred_tickets,
-    rjfa_rst_tp.barred_seasons,
-    rjfa_rst_tp.barred_first,
-    rjfa_rst_tp.from_location,
-    rjfa_rst_tp.to_location,
-    rjfa_rst_te.out_ret AS te_out_ret,
-    rjfa_rst_te.pass_exception
+    rjfa_rst_tt.toc_code
    FROM rjfa_rst_tr
      LEFT JOIN rjfa_rst_td USING (cf_mkr, restriction_code, sequence_no)
-     LEFT JOIN rjfa_rst_tt USING (cf_mkr, restriction_code, sequence_no)
-     LEFT JOIN rjfa_rst_tp USING (cf_mkr, restriction_code, sequence_no)
-     LEFT JOIN rjfa_rst_te USING (cf_mkr, restriction_code, sequence_no);
+     LEFT JOIN rjfa_rst_tt USING (cf_mkr, restriction_code, sequence_no);
 
 CREATE VIEW train_restriction AS
  SELECT rjfa_rst_sr.cf_mkr,
@@ -203,19 +192,10 @@ CREATE VIEW train_restriction AS
     rjfa_rst_sd.days,
     rjfa_rst_sq.location,
     rjfa_rst_sq.quota_ind AS sq_quota_ind,
-    rjfa_rst_sq.arr_dep,
-    rjfa_rst_sp.barred_class,
-    rjfa_rst_sp.barred_tickets,
-    rjfa_rst_sp.barred_seasons,
-    rjfa_rst_sp.barred_first,
-    rjfa_rst_sp.from_location,
-    rjfa_rst_sp.to_location,
-    rjfa_rst_se.pass_exception
+    rjfa_rst_sq.arr_dep
    FROM rjfa_rst_sr
      LEFT JOIN rjfa_rst_sd USING (cf_mkr, restriction_code, train_no, out_ret)
-     LEFT JOIN rjfa_rst_sq USING (cf_mkr, restriction_code, train_no, out_ret)
-     LEFT JOIN rjfa_rst_sp USING (cf_mkr, restriction_code, train_no, out_ret)
-     LEFT JOIN rjfa_rst_se USING (cf_mkr, restriction_code, train_no, out_ret);
+     LEFT JOIN rjfa_rst_sq USING (cf_mkr, restriction_code, train_no, out_ret);
 
 
 CREATE VIEW status_discount AS

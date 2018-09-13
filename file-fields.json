@@ -10,7 +10,7 @@
             "": [["UPDATE_MARKER", 1], ["CLUSTER_ID", 4], ["CLUSTER_NLC", 4], ["END_DATE", 8], ["START_DATE", 8]]
         },
         "NDF": { "//": "Non derivable fares",
-            "": [["UPDATE_MARKER", 1], ["ORIGIN_CODE", 4], ["DESTINATION_CODE", 4], ["ROUTE_CODE", 5], ["RAILCARD_CODE", 3], ["TICKET_CODE", 3], ["ND_RECORD_TYPE", 1], ["END_DATE", 8], ["START_DATE", 8], ["QUOTE_DATE", 8], ["SUPPRESS_MKR", 1], ["ADULT_FARE", 8], ["CHILD_FARE", 8], ["RESTRICTION_CODE", 2], ["COMPOSITE_INDICATOR", 1], ["CROSS_LONDON_IND", 1], [" PS_IND", 1]]
+            "//": "Legacy; superseded by NFO"
         },
         "NFO": { "//": "Non derivable fares overrides",
             "": [["UPDATE_MARKER", 1], ["ORIGIN_CODE", 4], ["DESTINATION_CODE", 4], ["ROUTE_CODE", 5], ["RAILCARD_CODE", 3], ["TICKET_CODE", 3], ["ND_RECORD_TYPE", 1], ["END_DATE", 8], ["START_DATE", 8], ["QUOTE_DATE", 8], ["SUPPRESS_MKR", 1], ["ADULT_FARE", 8], ["CHILD_FARE", 8], ["RESTRICTION_CODE", 2], ["COMPOSITE_INDICATOR", 1], ["CROSS_LONDON_IND", 1], ["PS_IND", 1]]
@@ -27,7 +27,9 @@
         "TJS": { "//": "Journey segments",
             "": [["JS_CODE", 3], ["END_DATE", 8], ["START_DATE", 8], ["LINE", 3], ["START", 2], ["END", 2]]
         },
-        "TPB": { "//": "Ticket publication data (todo)"},
+        "TPB": { "//": "Ticket publication data",
+            "//": "Omitted as obsolete after introduction of PMS"
+        },
         "TPN": { "//": "Print formats (todo)", "P": [], "T": [] },
         "TCL": { "//": "Class Legends (todo)" },
         "TRR": { "//": "Rail Rovers (todo)" },
@@ -57,7 +59,7 @@
             "D": [["STATUS_CODE", 3], ["END_DATE", 8], ["DISCOUNT_CATEGORY", 2], ["DISCOUNT_INDICATOR", 1], ["DISCOUNT_PERCENTAGE", 3]]
         },
         "FRR": { "//": "Rounding rules",
-            "": [["RULE_NO", 2], ["END_DATE", 8], ["RULE_INDEX", 2], ["START_DATE", 8], ["MAX_AMOUNT", 8], ["ROUND_AMOUNT", 8]]
+            "//": "Omitted as superseded by logic described in Section 6 of RSPS7001"
         },
         "RST": { "//": "Restrictions",
             "//": "Restriction dates:",
@@ -78,9 +80,9 @@
             "TD": [["UPDATE_MARKER", 1], ["RECORD_TYPE", 2], ["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["SEQUENCE_NO", 4], ["OUT_RET", 1], ["DATE_FROM", 4], ["DATE_TO", 4], ["DAYS", 7]],
             "//": "Time Restriction toc record:",
             "TT": [["UPDATE_MARKER", 1], ["RECORD_TYPE", 2], ["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["SEQUENCE_NO", 4], ["OUT_RET", 1], ["TOC_CODE", 2]],
-            "//": "Time Restriction privilege data:",
+            "//": "Time Restriction privilege data (Omitted as obsolete after introduction of PMS)",
             "TP": [["UPDATE_MARKER", 1], ["RECORD_TYPE", 2], ["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["SEQUENCE_NO", 4], ["OUT_RET", 1], ["BARRED_CLASS", 1], ["BARRED_TICKETS", 1], ["BARRED_SEASONS", 1], ["BARRED_FIRST", 1], ["FROM_LOCATION", 3], ["TO_LOCATION", 3]],
-            "//": "Time Restriction privilege pass exceptions:",
+            "//": "Time Restriction privilege pass exceptions (Omitted as obsolete after introduction of PMS)",
             "TE": [["UPDATE_MARKER", 1], ["RECORD_TYPE", 2], ["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["SEQUENCE_NO", 4], ["OUT_RET", 1], ["PASS_EXCEPTION", 1]],
             "//": "Train Restriction:",
             "SR": [["UPDATE_MARKER", 1], ["RECORD_TYPE", 2], ["CF_MKR", 1], ["RESTRICTION_CODE", 2], ["TRAIN_NO", 6], ["OUT_RET", 1], ["QUOTA_IND", 1], ["SLEEPER_IND", 1]],
