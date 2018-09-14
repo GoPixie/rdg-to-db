@@ -34,12 +34,12 @@ def iterate_fixed_fields(file_path, fields, full_only=True):
             record_type_pos = False
             break
     csv_like = None  # undetermined
-    with open(file_path, 'r') as f:
+    with open(file_path, 'r') as fxf:
         last_fi = 0
         last_rtime = 0
         rstime = t_time()
         stime = t_time()
-        for fi, line in enumerate(f.readlines()):
+        for fi, line in enumerate(fxf.readlines()):
             if line.startswith('/'):
                 continue
             line = line.rstrip('\n')
