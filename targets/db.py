@@ -211,6 +211,7 @@ def file_to_db(
             )
         trans.commit()
     except OperationalError as oe:
+        print(oe)
         raise
 
     return tables, row_counts, new_tables, fprefix, filename
