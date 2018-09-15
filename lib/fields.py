@@ -8,7 +8,8 @@ from .fixed_fields import iterate_fixed_fields, NotFixedFieldsException
 DATE_FIELDS = ['START_DATE', 'END_DATE', 'QUOTE_DATE', 'LAST_VALID_DATE', 'LAST_VALID_DAY']
 
 # FARE is in cents, not decimal
-INT_FIELDS = ['FARE', 'ROUTE_CODE', 'OUT_DAYS', 'OUT_MONTHS',
+INT_FIELDS = ['FARE', 'ADULT_FARE', 'CHILD_FARE',
+              'ROUTE_CODE', 'OUT_DAYS', 'OUT_MONTHS',
               'RET_DAYS', 'RET_MONTHS', 'RET_AFTER_DAYS', 'RET_AFTER_MONTHS',
               'MAX_PASSENGERS', 'MIN_PASSENGERS', 'MAX_ADULTS', 'MIN_ADULTS',
               'MAX_CHILDREN', 'MIN_CHILDREN', 'MAX_HOLDERS', 'MIN_HOLDERS',
