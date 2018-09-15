@@ -185,13 +185,11 @@ CREATE VIEW train_restriction AS
     rjfa_rst_sr.restriction_code,
     rjfa_rst_sr.train_no,
     rjfa_rst_sr.out_ret,
-    rjfa_rst_sr.quota_ind AS sr_quota_ind,
     rjfa_rst_sr.sleeper_ind,
     rjfa_rst_sd.date_from,
     rjfa_rst_sd.date_to,
     rjfa_rst_sd.days,
     rjfa_rst_sq.location,
-    rjfa_rst_sq.quota_ind AS sq_quota_ind,
     rjfa_rst_sq.arr_dep
    FROM rjfa_rst_sr
      LEFT JOIN rjfa_rst_sd USING (cf_mkr, restriction_code, train_no, out_ret)
