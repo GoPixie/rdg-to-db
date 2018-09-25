@@ -44,5 +44,5 @@ if __name__ == '__main__':
     log = logging.getLogger('targets_csv')
     file_prefixes = []
     if args['source'] != 'all':
-        file_prefixes = args['source'].split(',')
+        file_prefixes = args['source'].upper().split(',')
     getattr(targets, args['target'])(file_prefixes)  # resolves to e.g. `targets.csv()`
