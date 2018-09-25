@@ -133,13 +133,17 @@
     "RJTT": { "//": "Timetable Information: https://www.raildeliverygroup.com/our-services/rail-data/timetable-data.html & http://data.atoc.org/how-to"
     },
     "RJRG": {  "//": "Routeing Guide Data: https://www.raildeliverygroup.com/our-services/rail-data/routeing-guide-data.html & http://data.atoc.org/routeing-guide",
-        "RGS": {  "//": "Station file"
+        "RGS": {  "//": "Station file",
+            "": [["STATION_IDENTIFIER", 5], ["ROUTEING_POINT_1", 3], ["ROUTEING_POINT_2", 3], ["ROUTEING_POINT_3", 3], ["ROUTEING_POINT_4", 3], ["STATION_GROUP_ID", 3]]
         },
-        "RGG": {  "//": "Station-Group file"
+        "RGG": {  "//": "Station-Group file",
+            "": [["STATION_GROUP_ID", 3], ["MAIN_STATION", 3]]
         },
-        "RGP": {  "//": "Routeing point file"
+        "RGP": {  "//": "Routeing point file",
+            "": [["ROUTEING_POINT", 3]]
         },
-        "RGN": {  "//": "Node file"
+        "RGN": {  "//": "Node file",
+            "": [["NODE", 3]]
         },
         "RGM": {  "//": "Map file"
         },
