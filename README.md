@@ -48,7 +48,11 @@ Unless otherwise specified in local.cfg ('keep_old' setting), old downloaded ZIP
 
 ## Applying partial 'update only' files
 
-Daily downloads such as `RJTTC634.ZIP` above (note the `C`) contain only changes that are to be applied to the larger weekly `F` ZIP files. This is currently only implemented for `RJTT` feeds, and can be activated by adding the `--apply_changesets` option to the `./download` command, resulting in output of a new file .
+Daily downloads such as `RJTTC634.ZIP` above (note the `C`) contain only changes that are to be applied to the larger weekly `F` ZIP files. This is currently only implemented for `RJTT` feeds, and results in output of a new RJTTMxxx.ZIP file (note: the 'M' convention is peculiar to this script):
+
+```
+./download --apply_changesets
+```
 
 TODO: write logic to apply daily fares changesets
 
@@ -74,7 +78,7 @@ Tables are created with primary keys taken from [`field-pks.json`](field-pks.jso
 
 ## TODO
 
- - Partial 'update only' files
+ - Partial 'update only' for RJFA files
  - Set of minimal test ZIP files containing records for each record type
  - mysql backend for ([open-track schema](https://github.com/open-track/dtd2mysql))
  - database functions or views which [calculate UK Fares](https://github.com/open-track/fares-service-php/wiki/Fare-Lookup) for a given origin/destination pair!
