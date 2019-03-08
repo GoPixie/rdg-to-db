@@ -33,6 +33,10 @@ arg(
     '--unzip', action='store_true',
     help='Also unzip')
 arg(
+    '--apply_changesets', action='store_true',
+    help="Apply incremental daily changeset files to produce "
+    "an up to date full zipfile (RJTT only for now)")
+arg(
     '--force', action='store_true',
     help="Always download even if there's already a local "
     "file with the same name (& version)")
@@ -242,9 +246,13 @@ in local.cfg to keep these files around""")
                 os.unlink(os.path.join(download_dir, td_fname))
             to_delete = []
 
-        if args['unzip']:
+        if args['unzip'] or args['apply_changesets']:
             from targets import unzip
             unzip(file_fields.keys())
+
+        if args['apply_changesets']:
+            from rjtt import apply_changesets
+            apply_changesets()
     else:
         log = logging.getLogger('download')
         if 'username' not in creds:

@@ -46,9 +46,11 @@ The .versions file holds a record of past downloads and is used to find the most
 
 Unless otherwise specified in local.cfg ('keep_old' setting), old downloaded ZIP files will be deleted when new files become available
 
-## Applying partial 'update only' files (TODO)
+## Applying partial 'update only' files
 
-Some files such as `RJTTC634.ZIP` above (note the `C`) contain only changes that are to be applied to the larger `F` ZIP files. This is not currently applied, but is a planned feature.
+Daily downloads such as `RJTTC634.ZIP` above (note the `C`) contain only changes that are to be applied to the larger weekly `F` ZIP files. This is currently only implemented for `RJTT` feeds, and can be activated by adding the `--apply_changesets` option to the `./download` command, resulting in output of a new file .
+
+TODO: write logic to apply daily fares changesets
 
 
 ## Data transform
