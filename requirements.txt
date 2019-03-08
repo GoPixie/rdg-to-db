@@ -7,9 +7,9 @@ idna==2.5
 lxml==3.8.0
 MechanicalSoup==0.7.0
 pkg-resources==0.0.0
-requests==2.18.3
+requests>=2.20.0
 six==1.10.0
-urllib3==1.22
+urllib3>=1.23
 SQLAlchemy==1.1.13
 psycopg2==2.7.3
 PyMySQL==0.7.11
